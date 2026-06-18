@@ -1,6 +1,7 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Splash } from "./components/splash.js";
 import { StatusBar } from "./components/status-bar.js";
 import type { Config } from "./lib/config.js";
 import { ContainersView } from "./views/containers.js";
@@ -14,10 +15,22 @@ type Tab = "containers" | "images" | "volumes" | "machines" | "system";
 const TABS: Tab[] = ["containers", "images", "volumes", "machines", "system"];
 const bold = createTextAttributes({ bold: true });
 
+const VERSION = "0.1.0";
+
 export function App({ config }: { config: Config }) {
+	const [showSplash, setShowSplash] = useState(true);
 	const [activeTab, setActiveTab] = useState<Tab>(config.default_tab);
 
+	useEffect(() => {
+		const timer = setTimeout(() => setShowSplash(false), 1500);
+		return () => clearTimeout(timer);
+	}, []);
+
 	useKeyboard((key) => {
+		if (showSplash) {
+			setShowSplash(false);
+			return;
+		}
 		if (key.name === "1") setActiveTab("containers");
 		if (key.name === "2") setActiveTab("images");
 		if (key.name === "3") setActiveTab("volumes");
@@ -25,6 +38,8 @@ export function App({ config }: { config: Config }) {
 		if (key.name === "5") setActiveTab("system");
 		if (key.name === "q" || (key.ctrl && key.name === "c")) process.exit(0);
 	});
+
+	if (showSplash) return <Splash version={VERSION} />;
 
 	return (
 		<box flexDirection="column" width="100%">
