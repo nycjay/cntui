@@ -1,4 +1,4 @@
-# ctui Project Steering
+# ConTUI Project Steering
 
 ## What This Is
 

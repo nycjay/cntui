@@ -1,9 +1,17 @@
-# ctui
+# ConTUI
 
 A terminal UI for [Apple's container runtime](https://github.com/apple/container). Manage containers, images, volumes, and machines with keyboard-driven navigation.
 
+```
+  ┌─────────────────────────────┐
+  │  ╭───╮                      │
+  │  │ ▶ │  ConTUI              │
+  │  ╰───╯                      │
+  └─────────────────────────────┘
+```
+
 <!-- TODO: Add demo GIF here -->
-<!-- ![ctui demo](./docs/demo.gif) -->
+<!-- ![ConTUI demo](./docs/demo.gif) -->
 
 ## Features
 
@@ -24,8 +32,8 @@ A terminal UI for [Apple's container runtime](https://github.com/apple/container
 ## Install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ctui.git
-cd ctui
+git clone https://github.com/YOUR_USERNAME/contui.git
+cd contui
 bun install
 ```
 
@@ -59,7 +67,7 @@ bun run dev
 
 ## Configuration
 
-ctui reads an optional config file at `~/.config/ctui/config.toml`:
+ConTUI reads an optional config file at `~/.config/contui/config.toml`:
 
 ```toml
 # How often to poll for container state changes (seconds)
@@ -73,7 +81,7 @@ default_tab = "containers"
 auto_start_service = false
 ```
 
-All options are optional — ctui works without a config file.
+All options are optional — ConTUI works without a config file.
 
 ## Development
 
@@ -93,7 +101,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 ## Architecture
 
-ctui is a three-layer application:
+ConTUI is a three-layer application:
 
 1. **Application code** (TypeScript + React) — your views, state, keybindings
 2. **OpenTUI** (Zig native core) — terminal rendering, layout, input parsing

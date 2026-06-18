@@ -1,8 +1,8 @@
-# ctui Architecture
+# ConTUI Architecture
 
 ## Overview
 
-ctui is a terminal user interface for Apple's container runtime. It provides a
+ConTUI is a terminal user interface for Apple's container runtime. It provides a
 visual, interactive way to manage containers, images, and volumes that would
 otherwise require memorizing CLI commands.
 
@@ -10,7 +10,7 @@ otherwise require memorizing CLI commands.
 
 ```
 ┌──────────────────────────────────────────────────┐
-│  ctui Application Code (TypeScript + React)      │
+│  ConTUI Application Code (TypeScript + React)     │
 │  You write this. Views, state, keybindings.      │
 ├──────────────────────────────────────────────────┤
 │  OpenTUI Framework (Zig core + React reconciler) │
@@ -82,7 +82,7 @@ Key commands we use:
 ## Directory Structure
 
 ```
-ctui/
+contui/
 ├── src/
 │   ├── index.tsx          # Entry point, system validation
 │   ├── app.tsx            # Tab router
