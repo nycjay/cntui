@@ -8,6 +8,7 @@ import {
 	stopSystem,
 } from "../lib/system.js";
 import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
 import type { DiskUsage, SystemStatus } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -42,32 +43,31 @@ export function SystemView() {
 	return (
 		<box flexDirection="column">
 			<text
-				fg="#cdd6f4"
+				fg={theme.text}
 				attributes={bold}
 				content="System — [s] start/stop service [r] refresh"
 			/>
 			<text
-				fg={status?.running ? "#a6e3a1" : "#f38ba8"}
+				fg={status?.running ? theme.success : theme.error}
 				content={`Service: ${status?.running ? "Running" : "Stopped"}`}
 			/>
 			{status?.version && (
-				<text fg="#cdd6f4" content={`Version: ${status.version}`} />
+				<text fg={theme.text} content={`Version: ${status.version}`} />
 			)}
 			{status?.commit && (
-				<text fg="#6c7086" content={`Commit: ${status.commit}`} />
+				<text fg={theme.muted} content={`Commit:  ${status.commit}`} />
 			)}
 			{diskUsage.length > 0 && (
 				<box flexDirection="column" marginTop={1}>
-					<text fg="#cdd6f4" attributes={bold} content="Disk Usage" />
+					<text fg={theme.text} attributes={bold} content="Disk Usage" />
 					<text
-						fg="#6c7086"
-						attributes={bold}
+						fg={theme.muted}
 						content={`  ${col("TYPE", 14)} ${col("TOTAL", 8)} ${col("ACTIVE", 8)} ${col("SIZE", 12)} RECLAIMABLE`}
 					/>
 					{diskUsage.map((d) => (
 						<text
 							key={d.type}
-							fg="#cdd6f4"
+							fg={theme.text}
 							content={`  ${col(d.type, 14)} ${col(String(d.total), 8)} ${col(String(d.active), 8)} ${col(d.size, 12)} ${d.reclaimable}`}
 						/>
 					))}

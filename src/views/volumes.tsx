@@ -2,6 +2,7 @@ import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
 import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
 import { deleteVolume, listVolumes } from "../lib/volumes.js";
 import type { Volume } from "../types/container.js";
 
@@ -42,32 +43,32 @@ export function VolumesView() {
 		}
 	});
 
-	if (error) return <text fg="red" content={`Error: ${error}`} />;
+	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 
 	const header = `  ${col("NAME", 45)} CREATED`;
 
 	return (
 		<box flexDirection="column">
 			<text
-				fg="#cdd6f4"
+				fg={theme.text}
 				attributes={bold}
 				content={`Volumes (${volumes.length}) — [d] delete [r] refresh`}
 			/>
-			<text fg="#6c7086" attributes={bold} content={header} />
+			<text fg={theme.muted} content={header} />
 			{volumes.map((vol, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
 				const line = `${prefix}${col(vol.name, 45)} ${vol.createdAt ?? ""}`;
 				return (
 					<text
 						key={vol.name}
-						fg={i === selected ? "#a6e3a1" : "#cdd6f4"}
+						fg={i === selected ? theme.selected : theme.text}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{volumes.length === 0 && (
-				<text fg="#6c7086" attributes={dim} content="  No volumes found" />
+				<text fg={theme.muted} attributes={dim} content="  No volumes found" />
 			)}
 		</box>
 	);

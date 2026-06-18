@@ -3,6 +3,7 @@ import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
 import { deleteImage, listImages } from "../lib/images.js";
 import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
 import type { Image } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -48,32 +49,56 @@ export function ImagesView() {
 		}
 	});
 
-	if (error) return <text fg="red" content={`Error: ${error}`} />;
+	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 
 	const header = `  ${col("NAME", 45)} ${col("SIZE", 10)} CREATED`;
+	const current = images[selected];
 
 	return (
 		<box flexDirection="column">
 			<text
-				fg="#cdd6f4"
+				fg={theme.text}
 				attributes={bold}
 				content={`Images (${images.length}) — [d] delete [r] refresh`}
 			/>
-			<text fg="#6c7086" attributes={bold} content={header} />
+			<text fg={theme.muted} content={header} />
 			{images.map((img, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
 				const line = `${prefix}${col(img.configuration.name, 45)} ${col(formatSize(img.configuration.descriptor.size), 10)} ${img.configuration.creationDate}`;
 				return (
 					<text
 						key={img.id}
-						fg={i === selected ? "#a6e3a1" : "#cdd6f4"}
+						fg={i === selected ? theme.selected : theme.text}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{images.length === 0 && (
-				<text fg="#6c7086" attributes={dim} content="  No images found" />
+				<text fg={theme.muted} attributes={dim} content="  No images found" />
+			)}
+			{current && (
+				<box
+					marginTop={1}
+					borderStyle="single"
+					borderColor={theme.border}
+					paddingX={1}
+					flexDirection="column"
+				>
+					<text
+						fg={theme.text}
+						attributes={bold}
+						content={current.configuration.name}
+					/>
+					<text
+						fg={theme.muted}
+						content={`Digest: ${current.configuration.descriptor.digest}`}
+					/>
+					<text
+						fg={theme.muted}
+						content={`Size: ${formatSize(current.configuration.descriptor.size)} | Created: ${current.configuration.creationDate}`}
+					/>
+				</box>
 			)}
 		</box>
 	);

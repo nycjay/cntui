@@ -8,6 +8,7 @@ import {
 	stopMachine,
 } from "../lib/machines.js";
 import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
 
 const bold = createTextAttributes({ bold: true });
 const dim = createTextAttributes({ dim: true });
@@ -50,32 +51,32 @@ export function MachinesView() {
 		}
 	});
 
-	if (error) return <text fg="red" content={`Error: ${error}`} />;
+	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 
-	const header = `  ${col("NAME", 24)} ${col("STATUS", 10)} ${col("IMAGE", 35)} DEFAULT`;
+	const header = `  ${col("NAME", 24)} ${col("STATUS", 10)} ${col("IMAGE", 30)} DEFAULT`;
 
 	return (
 		<box flexDirection="column">
 			<text
-				fg="#cdd6f4"
+				fg={theme.text}
 				attributes={bold}
 				content={`Machines (${machines.length}) — [s] stop [d] delete [r] refresh`}
 			/>
-			<text fg="#6c7086" attributes={bold} content={header} />
+			<text fg={theme.muted} content={header} />
 			{machines.map((m, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
-				const line = `${prefix}${col(m.id, 24)} ${col(m.status, 10)} ${col(m.image, 35)} ${m.default ? "★" : ""}`;
+				const line = `${prefix}${col(m.id, 24)} ${col(m.status, 10)} ${col(m.image, 30)} ${m.default ? "★" : ""}`;
 				return (
 					<text
 						key={m.id}
-						fg={i === selected ? "#a6e3a1" : "#cdd6f4"}
+						fg={i === selected ? theme.selected : theme.text}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{machines.length === 0 && (
-				<text fg="#6c7086" attributes={dim} content="  No machines found" />
+				<text fg={theme.muted} attributes={dim} content="  No machines found" />
 			)}
 		</box>
 	);

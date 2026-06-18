@@ -8,6 +8,7 @@ import {
 	stopContainer,
 } from "../lib/containers.js";
 import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
 import type { Container } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -56,18 +57,19 @@ export function ContainersView({
 		}
 	});
 
-	if (error) return <text fg="red" content={`Error: ${error}`} />;
+	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 
-	const header = `  ${col("ID", 24)} ${col("STATE", 10)} ${col("IMAGE", 35)} PORTS`;
+	const header = `  ${col("ID", 24)} ${col("STATE", 10)} ${col("IMAGE", 30)} PORTS`;
+	const current = containers[selected];
 
 	return (
 		<box flexDirection="column">
 			<text
-				fg="#cdd6f4"
+				fg={theme.text}
 				attributes={bold}
 				content={`Containers (${containers.length}) — [s] start/stop [d] delete [r] refresh`}
 			/>
-			<text fg="#6c7086" attributes={bold} content={header} />
+			<text fg={theme.muted} content={header} />
 			{containers.map((c, i) => {
 				const ports =
 					c.configuration.publishedPorts
@@ -75,18 +77,47 @@ export function ContainersView({
 						.join(", ") ?? "";
 				const prefix = i === selected ? "▸ " : "  ";
 				const image = c.configuration.image.reference ?? "";
-				const line = `${prefix}${col(c.id, 24)} ${col(c.status.state, 10)} ${col(image, 35)} ${ports}`;
+				const line = `${prefix}${col(c.id, 24)} ${col(c.status.state, 10)} ${col(image, 30)} ${ports}`;
 				return (
 					<text
 						key={c.id}
-						fg={i === selected ? "#a6e3a1" : "#cdd6f4"}
+						fg={i === selected ? theme.selected : theme.text}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{containers.length === 0 && (
-				<text fg="#6c7086" attributes={dim} content="  No containers found" />
+				<text
+					fg={theme.muted}
+					attributes={dim}
+					content="  No containers found"
+				/>
+			)}
+			{current && (
+				<box
+					marginTop={1}
+					borderStyle="single"
+					borderColor={theme.border}
+					paddingX={1}
+					flexDirection="column"
+				>
+					<text fg={theme.text} attributes={bold} content={current.id} />
+					<text
+						fg={theme.muted}
+						content={`Image: ${current.configuration.image.reference}`}
+					/>
+					<text
+						fg={theme.muted}
+						content={`State: ${current.status.state} | CPUs: ${current.configuration.resources.cpus} | Memory: ${(current.configuration.resources.memoryInBytes / 1e9).toFixed(1)}G`}
+					/>
+					{(current.configuration.publishedPorts?.length ?? 0) > 0 && (
+						<text
+							fg={theme.muted}
+							content={`Ports: ${current.configuration.publishedPorts.map((p) => `${p.hostPort}:${p.containerPort}/${p.proto}`).join(", ")}`}
+						/>
+					)}
+				</box>
 			)}
 		</box>
 	);

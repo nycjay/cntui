@@ -1,14 +1,15 @@
 import { createTextAttributes } from "@opentui/core";
+import { theme } from "../lib/theme.js";
 
 const dim = createTextAttributes({ dim: true });
 
 export function StatusBar() {
 	return (
-		<box borderStyle="single" borderColor="#45475a" paddingX={1}>
+		<box borderStyle="single" borderColor={theme.border} paddingX={1}>
 			<text
-				fg="#6c7086"
+				fg={theme.muted}
 				attributes={dim}
-				content="[1-5] Switch Tab | ↑↓ Navigate | [s] Start/Stop | [d] Delete | [r] Refresh | [q] Quit"
+				content="[1-5] Tab | ↑↓ Navigate | [s] Start/Stop | [d] Delete | [r] Refresh | [q] Quit"
 			/>
 		</box>
 	);

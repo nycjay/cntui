@@ -1,4 +1,5 @@
 import { createTextAttributes } from "@opentui/core";
+import { theme } from "../lib/theme.js";
 
 const bold = createTextAttributes({ bold: true });
 const dim = createTextAttributes({ dim: true });
@@ -19,8 +20,8 @@ export function Splash({ version }: { version: string }) {
 			justifyContent="center"
 			alignItems="center"
 		>
-			<text fg="#a6e3a1" attributes={bold} content={LOGO} />
-			<text fg="#6c7086" attributes={dim} content={`v${version}`} />
+			<text fg={theme.active} attributes={bold} content={LOGO} />
+			<text fg={theme.muted} attributes={dim} content={`v${version}`} />
 		</box>
 	);
 }
