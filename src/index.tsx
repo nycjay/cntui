@@ -1,13 +1,17 @@
 import { createCliRenderer } from "@opentui/core";
 import { createRoot } from "@opentui/react";
 import { App } from "./app.js";
+import { loadConfig } from "./lib/config.js";
 import {
 	checkVersionCompatibility,
 	getSystemStatus,
 	isContainerInstalled,
+	startSystem,
 } from "./lib/system.js";
 
 async function main() {
+	const config = loadConfig();
+
 	const installed = await isContainerInstalled();
 	if (!installed) {
 		console.error(
@@ -25,14 +29,22 @@ async function main() {
 	}
 
 	if (!status.running) {
-		console.error(
-			"Container service is not running. Start it with: container system start",
-		);
-		process.exit(1);
+		if (config.auto_start_service) {
+			console.error("Container service not running. Starting...");
+			await startSystem();
+		} else {
+			console.error(
+				"Container service is not running. Start it with: container system start",
+			);
+			console.error(
+				"Or set auto_start_service = true in ~/.config/ctui/config.toml",
+			);
+			process.exit(1);
+		}
 	}
 
 	const renderer = await createCliRenderer();
-	createRoot(renderer).render(<App />);
+	createRoot(renderer).render(<App config={config} />);
 }
 
 main();

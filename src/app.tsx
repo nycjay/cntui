@@ -2,6 +2,7 @@ import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useState } from "react";
 import { StatusBar } from "./components/status-bar.js";
+import type { Config } from "./lib/config.js";
 import { ContainersView } from "./views/containers.js";
 import { ImagesView } from "./views/images.js";
 import { MachinesView } from "./views/machines.js";
@@ -13,8 +14,8 @@ type Tab = "containers" | "images" | "volumes" | "machines" | "system";
 const TABS: Tab[] = ["containers", "images", "volumes", "machines", "system"];
 const bold = createTextAttributes({ bold: true });
 
-export function App() {
-	const [activeTab, setActiveTab] = useState<Tab>("containers");
+export function App({ config }: { config: Config }) {
+	const [activeTab, setActiveTab] = useState<Tab>(config.default_tab);
 
 	useKeyboard((key) => {
 		if (key.name === "1") setActiveTab("containers");
@@ -38,7 +39,9 @@ export function App() {
 				))}
 			</box>
 			<box flexGrow={1}>
-				{activeTab === "containers" && <ContainersView />}
+				{activeTab === "containers" && (
+					<ContainersView refreshInterval={config.refresh_interval} />
+				)}
 				{activeTab === "images" && <ImagesView />}
 				{activeTab === "volumes" && <VolumesView />}
 				{activeTab === "machines" && <MachinesView />}

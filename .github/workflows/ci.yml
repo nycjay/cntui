@@ -30,3 +30,6 @@ jobs:
 
       - name: Test
         run: bun test --coverage
+
+      - name: Build
+        run: bun run build

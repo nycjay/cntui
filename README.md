@@ -1,58 +1,105 @@
 # ctui
 
-A terminal UI for [Apple's container runtime](https://github.com/apple/container).
+A terminal UI for [Apple's container runtime](https://github.com/apple/container). Manage containers, images, volumes, and machines with keyboard-driven navigation.
 
-Manage containers, images, and volumes with keyboard-driven navigation instead
-of memorizing CLI commands.
+<!-- TODO: Add demo GIF here -->
+<!-- ![ctui demo](./docs/demo.gif) -->
+
+## Features
+
+- **Containers** — list, start, stop, delete with live auto-refresh
+- **Images** — browse local images, delete unused ones
+- **Volumes** — manage persistent storage
+- **Machines** — manage container machines (persistent Linux environments, v1.0+)
+- **System** — check service status, disk usage, start/stop the daemon
+- **Startup validation** — checks CLI is installed, version is compatible, service is running
 
 ## Requirements
 
 - macOS with Apple Silicon
-- [Bun](https://bun.sh) (runtime)
-- [Zig](https://ziglang.org) (required to build OpenTUI's native core)
-- [Apple Container CLI](https://github.com/apple/container/releases) installed and service running
+- [Apple Container CLI](https://github.com/apple/container/releases) v1.0.0+
+- [Bun](https://bun.sh) runtime
+- [Zig](https://ziglang.org) (required to build OpenTUI's native rendering core)
 
-## Quick Start
+## Install
 
 ```bash
-# Install dependencies
+git clone https://github.com/YOUR_USERNAME/ctui.git
+cd ctui
 bun install
+```
 
-# Start the container service (if not already running)
-container system start
+Or if you use [mise](https://mise.jdx.dev) for version management:
 
-# Run the TUI
-bun run dev
+```bash
+mise install   # installs correct bun + zig versions
+bun install
 ```
 
 ## Usage
 
+```bash
+# Start the container service (if not already running)
+container system start
+
+# Launch the TUI
+bun run dev
+```
+
+### Keyboard Shortcuts
+
 | Key | Action |
 |-----|--------|
-| `1` | Containers tab |
-| `2` | Images tab |
-| `3` | Volumes tab |
-| `4` | System tab |
-| `↑/↓` | Navigate list |
+| `1`–`5` | Switch tabs (Containers, Images, Volumes, Machines, System) |
+| `↑` / `↓` | Navigate list |
 | `s` | Start/Stop selected item |
 | `d` | Delete selected item |
 | `r` | Refresh current view |
 | `q` | Quit |
 
+## Configuration
+
+ctui reads an optional config file at `~/.config/ctui/config.toml`:
+
+```toml
+# How often to poll for container state changes (seconds)
+refresh_interval = 3
+
+# Which tab to show on launch
+# Options: containers, images, volumes, machines, system
+default_tab = "containers"
+
+# Automatically start the container service if it's not running
+auto_start_service = false
+```
+
+All options are optional — ctui works without a config file.
+
 ## Development
 
+Requires [just](https://github.com/casey/just) as a task runner:
+
 ```bash
-bun test          # Run tests
-bun run lint      # Check lint + formatting
-bun run lint:fix  # Auto-fix
-bun run typecheck # Type checking
-bun run build     # Compile to standalone binary
+just doctor        # Check your environment
+just setup         # Install dependencies
+just check         # Run lint + typecheck + tests (same as CI)
+just dev           # Run with hot reload
+just test-watch    # TDD mode
+just test-coverage # Coverage report
+just build         # Compile standalone binary
 ```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 ## Architecture
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for a detailed explanation of the
-three-layer design (application code → OpenTUI framework → container CLI).
+ctui is a three-layer application:
+
+1. **Application code** (TypeScript + React) — your views, state, keybindings
+2. **OpenTUI** (Zig native core) — terminal rendering, layout, input parsing
+3. **Apple Container CLI** — spawned as subprocess, JSON output parsed
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for full details.
 
 ## License
 

@@ -12,7 +12,9 @@ import type { Container } from "../types/container.js";
 const bold = createTextAttributes({ bold: true });
 const dim = createTextAttributes({ dim: true });
 
-export function ContainersView() {
+export function ContainersView({
+	refreshInterval = 3,
+}: { refreshInterval?: number }) {
 	const [containers, setContainers] = useState<Container[]>([]);
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
@@ -29,7 +31,7 @@ export function ContainersView() {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
 	useEffect(() => {
 		refresh();
-		const interval = setInterval(refresh, 3000);
+		const interval = setInterval(refresh, refreshInterval * 1000);
 		return () => clearInterval(interval);
 	}, []);
 
