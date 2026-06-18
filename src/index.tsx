@@ -73,6 +73,7 @@ async function main() {
 	const renderer = await createCliRenderer({
 		openConsoleOnError: false,
 		consoleMode: "disabled",
+		backgroundColor: "#1a1b26",
 	});
 	createRoot(renderer).render(<App config={config} />);
 }
