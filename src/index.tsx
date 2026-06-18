@@ -70,7 +70,7 @@ async function main() {
 		}
 	}
 
-	const renderer = await createCliRenderer({ backgroundColor: "transparent" });
+	const renderer = await createCliRenderer({ backgroundColor: "#1e1e2e" });
 	createRoot(renderer).render(<App config={config} />);
 }
 

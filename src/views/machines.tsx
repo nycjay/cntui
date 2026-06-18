@@ -7,6 +7,7 @@ import {
 	listMachines,
 	stopMachine,
 } from "../lib/machines.js";
+import { col } from "../lib/table.js";
 
 const bold = createTextAttributes({ bold: true });
 const dim = createTextAttributes({ dim: true });
@@ -51,30 +52,30 @@ export function MachinesView() {
 
 	if (error) return <text fg="red" content={`Error: ${error}`} />;
 
-	const header = `  ${"NAME".padEnd(24)} ${"STATUS".padEnd(12)} ${"IMAGE".padEnd(30)} DEFAULT`;
+	const header = `  ${col("NAME", 24)} ${col("STATUS", 10)} ${col("IMAGE", 35)} DEFAULT`;
 
 	return (
 		<box flexDirection="column">
 			<text
-				fg="default"
+				fg="#cdd6f4"
 				attributes={bold}
 				content={`Machines (${machines.length}) — [s] stop [d] delete [r] refresh`}
 			/>
-			<text fg="default" attributes={bold} content={header} />
+			<text fg="#6c7086" attributes={bold} content={header} />
 			{machines.map((m, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
-				const line = `${prefix}${m.id.padEnd(24)} ${m.status.padEnd(12)} ${m.image.padEnd(30)} ${m.default ? "★" : ""}`;
+				const line = `${prefix}${col(m.id, 24)} ${col(m.status, 10)} ${col(m.image, 35)} ${m.default ? "★" : ""}`;
 				return (
 					<text
 						key={m.id}
-						fg={i === selected ? "green" : "default"}
+						fg={i === selected ? "#a6e3a1" : "#cdd6f4"}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{machines.length === 0 && (
-				<text fg="default" attributes={dim} content=" No machines found" />
+				<text fg="#6c7086" attributes={dim} content="  No machines found" />
 			)}
 		</box>
 	);

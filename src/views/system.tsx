@@ -7,6 +7,7 @@ import {
 	startSystem,
 	stopSystem,
 } from "../lib/system.js";
+import { col } from "../lib/table.js";
 import type { DiskUsage, SystemStatus } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -38,36 +39,36 @@ export function SystemView() {
 		if (key.name === "r") await refresh();
 	});
 
-	const serviceColor = status?.running ? "green" : "red";
-	const serviceText = status?.running ? "Running" : "Stopped";
-
 	return (
 		<box flexDirection="column">
 			<text
-				fg="default"
+				fg="#cdd6f4"
 				attributes={bold}
 				content="System — [s] start/stop service [r] refresh"
 			/>
-			<text fg={serviceColor} content={`Service: ${serviceText}`} />
+			<text
+				fg={status?.running ? "#a6e3a1" : "#f38ba8"}
+				content={`Service: ${status?.running ? "Running" : "Stopped"}`}
+			/>
 			{status?.version && (
-				<text fg="default" content={`Version: ${status.version}`} />
+				<text fg="#cdd6f4" content={`Version: ${status.version}`} />
 			)}
 			{status?.commit && (
-				<text fg="default" content={`Commit: ${status.commit}`} />
+				<text fg="#6c7086" content={`Commit: ${status.commit}`} />
 			)}
 			{diskUsage.length > 0 && (
 				<box flexDirection="column" marginTop={1}>
-					<text fg="default" attributes={bold} content="Disk Usage" />
+					<text fg="#cdd6f4" attributes={bold} content="Disk Usage" />
 					<text
-						fg="default"
+						fg="#6c7086"
 						attributes={bold}
-						content={`  ${"TYPE".padEnd(16)} ${"TOTAL".padEnd(8)} ${"ACTIVE".padEnd(8)} ${"SIZE".padEnd(12)} RECLAIMABLE`}
+						content={`  ${col("TYPE", 14)} ${col("TOTAL", 8)} ${col("ACTIVE", 8)} ${col("SIZE", 12)} RECLAIMABLE`}
 					/>
 					{diskUsage.map((d) => (
 						<text
-							fg="default"
 							key={d.type}
-							content={`  ${d.type.padEnd(16)} ${String(d.total).padEnd(8)} ${String(d.active).padEnd(8)} ${d.size.padEnd(12)} ${d.reclaimable}`}
+							fg="#cdd6f4"
+							content={`  ${col(d.type, 14)} ${col(String(d.total), 8)} ${col(String(d.active), 8)} ${col(d.size, 12)} ${d.reclaimable}`}
 						/>
 					))}
 				</box>

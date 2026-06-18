@@ -7,6 +7,7 @@ import {
 	startContainer,
 	stopContainer,
 } from "../lib/containers.js";
+import { col } from "../lib/table.js";
 import type { Container } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -57,16 +58,16 @@ export function ContainersView({
 
 	if (error) return <text fg="red" content={`Error: ${error}`} />;
 
-	const header = `  ${"ID".padEnd(20)} ${"STATE".padEnd(12)} ${"IMAGE".padEnd(30)} PORTS`;
+	const header = `  ${col("ID", 24)} ${col("STATE", 10)} ${col("IMAGE", 35)} PORTS`;
 
 	return (
 		<box flexDirection="column">
 			<text
-				fg="default"
+				fg="#cdd6f4"
 				attributes={bold}
 				content={`Containers (${containers.length}) — [s] start/stop [d] delete [r] refresh`}
 			/>
-			<text fg="default" attributes={bold} content={header} />
+			<text fg="#6c7086" attributes={bold} content={header} />
 			{containers.map((c, i) => {
 				const ports =
 					c.configuration.publishedPorts
@@ -74,18 +75,18 @@ export function ContainersView({
 						.join(", ") ?? "";
 				const prefix = i === selected ? "▸ " : "  ";
 				const image = c.configuration.image.reference ?? "";
-				const line = `${prefix}${c.id.padEnd(20)} ${c.status.state.padEnd(12)} ${image.padEnd(30)} ${ports}`;
+				const line = `${prefix}${col(c.id, 24)} ${col(c.status.state, 10)} ${col(image, 35)} ${ports}`;
 				return (
 					<text
 						key={c.id}
-						fg={i === selected ? "green" : "default"}
+						fg={i === selected ? "#a6e3a1" : "#cdd6f4"}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{containers.length === 0 && (
-				<text fg="default" attributes={dim} content=" No containers found" />
+				<text fg="#6c7086" attributes={dim} content="  No containers found" />
 			)}
 		</box>
 	);

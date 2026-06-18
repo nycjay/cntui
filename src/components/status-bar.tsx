@@ -4,11 +4,11 @@ const dim = createTextAttributes({ dim: true });
 
 export function StatusBar() {
 	return (
-		<box borderStyle="single" paddingX={1}>
+		<box borderStyle="single" borderColor="#45475a" paddingX={1}>
 			<text
-				fg="default"
+				fg="#6c7086"
 				attributes={dim}
-				content="[1-5] Switch Tab | [Enter] Select | [d] Delete | [s] Start/Stop | [q] Quit"
+				content="[1-5] Switch Tab | ↑↓ Navigate | [s] Start/Stop | [d] Delete | [r] Refresh | [q] Quit"
 			/>
 		</box>
 	);

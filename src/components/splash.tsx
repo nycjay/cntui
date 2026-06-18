@@ -24,8 +24,8 @@ export function Splash({ version }: { version: string }) {
 			justifyContent="center"
 			alignItems="center"
 		>
-			<text fg="default" attributes={bold} content={LOGO} />
-			<text fg="default" attributes={dim} content={`v${version}`} />
+			<text fg="#a6e3a1" attributes={bold} content={LOGO} />
+			<text fg="#6c7086" attributes={dim} content={`v${version}`} />
 		</box>
 	);
 }
