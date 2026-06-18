@@ -48,7 +48,9 @@ export function ContainersView({
 			if (pending.type === "stop") await stopContainer(pending.id);
 			if (pending.type === "delete") await deleteContainer(pending.id, true);
 		} catch (e) {
+			setPending(null);
 			setError((e as Error).message);
+			return;
 		}
 		setPending(null);
 		await refresh();
@@ -56,6 +58,10 @@ export function ContainersView({
 
 	useKeyboard((key) => {
 		if (pending) return;
+		if (key.name === "escape" && error) {
+			setError(null);
+			return;
+		}
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(containers.length - 1, s + 1));
@@ -86,13 +92,17 @@ export function ContainersView({
 		);
 	}
 
-	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
-
 	const header = `  ${col("ID", 24)} ${col("STATE", 10)} ${col("IMAGE", 30)} PORTS`;
 	const current = containers[selected];
 
 	return (
 		<box flexDirection="column">
+			{error && (
+				<text
+					fg={theme.error}
+					content={`Error: ${error} (press Esc to dismiss)`}
+				/>
+			)}
 			<text
 				fg={theme.text}
 				attributes={bold}
