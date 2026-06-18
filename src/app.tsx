@@ -48,7 +48,7 @@ export function App({ config }: { config: Config }) {
 					<text
 						key={tab}
 						attributes={activeTab === tab ? bold : undefined}
-						fg={activeTab === tab ? "6" : "8"}
+						fg={activeTab === tab ? "cyan" : "white"}
 						content={` [${i + 1}] ${tab.charAt(0).toUpperCase() + tab.slice(1)} `}
 					/>
 				))}
