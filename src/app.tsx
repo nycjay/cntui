@@ -42,7 +42,13 @@ export function App({ config }: { config: Config }) {
 	if (showSplash) return <Splash version={VERSION} />;
 
 	return (
-		<box flexDirection="column" width="100%">
+		<box
+			flexDirection="column"
+			width="100%"
+			height="100%"
+			backgroundColor="#1a1b26"
+			shouldFill={true}
+		>
 			<box>
 				{TABS.map((tab, i) => (
 					<text

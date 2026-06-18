@@ -17,6 +17,8 @@ export function Splash({ version }: { version: string }) {
 			flexDirection="column"
 			width="100%"
 			height="100%"
+			backgroundColor="#1a1b26"
+			shouldFill={true}
 			justifyContent="center"
 			alignItems="center"
 		>
