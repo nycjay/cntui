@@ -1,6 +1,7 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
+import { Confirm } from "../components/confirm.js";
 import {
 	deleteContainer,
 	listContainers,
@@ -14,12 +15,15 @@ import type { Container } from "../types/container.js";
 const bold = createTextAttributes({ bold: true });
 const dim = createTextAttributes({ dim: true });
 
+type PendingAction = { type: "start" | "stop" | "delete"; id: string } | null;
+
 export function ContainersView({
 	refreshInterval = 3,
 }: { refreshInterval?: number }) {
 	const [containers, setContainers] = useState<Container[]>([]);
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
+	const [pending, setPending] = useState<PendingAction>(null);
 
 	const refresh = async () => {
 		try {
@@ -37,33 +41,50 @@ export function ContainersView({
 		return () => clearInterval(interval);
 	}, []);
 
-	useKeyboard(async (key) => {
+	const execAction = async () => {
+		if (!pending) return;
+		try {
+			if (pending.type === "start") await startContainer(pending.id);
+			if (pending.type === "stop") await stopContainer(pending.id);
+			if (pending.type === "delete") await deleteContainer(pending.id, true);
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPending(null);
+		await refresh();
+	};
+
+	useKeyboard((key) => {
+		if (pending) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(containers.length - 1, s + 1));
-		if (key.name === "r") await refresh();
+		if (key.name === "r") {
+			refresh();
+			return;
+		}
 
 		const c = containers[selected];
 		if (!c) return;
 
 		if (key.name === "s") {
-			try {
-				if (c.status.state === "running") await stopContainer(c.id);
-				else await startContainer(c.id);
-			} catch (e) {
-				setError((e as Error).message);
-			}
-			await refresh();
+			const type = c.status.state === "running" ? "stop" : "start";
+			setPending({ type, id: c.id });
 		}
 		if (key.name === "d") {
-			try {
-				await deleteContainer(c.id, true);
-			} catch (e) {
-				setError((e as Error).message);
-			}
-			await refresh();
+			setPending({ type: "delete", id: c.id });
 		}
 	});
+
+	if (pending) {
+		return (
+			<Confirm
+				message={`${pending.type} container "${pending.id}"?`}
+				onConfirm={execAction}
+				onCancel={() => setPending(null)}
+			/>
+		);
+	}
 
 	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 

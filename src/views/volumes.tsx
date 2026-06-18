@@ -1,6 +1,7 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
+import { Confirm } from "../components/confirm.js";
 import { col } from "../lib/table.js";
 import { theme } from "../lib/theme.js";
 import { deleteVolume, listVolumes } from "../lib/volumes.js";
@@ -13,6 +14,7 @@ export function VolumesView() {
 	const [volumes, setVolumes] = useState<Volume[]>([]);
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
+	const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
 	const refresh = async () => {
 		try {
@@ -28,20 +30,44 @@ export function VolumesView() {
 		refresh();
 	}, []);
 
-	useKeyboard(async (key) => {
+	const execDelete = async () => {
+		if (!pendingDelete) return;
+		try {
+			await deleteVolume(pendingDelete);
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPendingDelete(null);
+		await refresh();
+	};
+
+	useKeyboard((key) => {
+		if (pendingDelete) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(volumes.length - 1, s + 1));
-		if (key.name === "r") await refresh();
+		if (key.name === "r") {
+			refresh();
+			return;
+		}
 
 		const vol = volumes[selected];
 		if (!vol) return;
 
 		if (key.name === "d") {
-			await deleteVolume(vol.name);
-			await refresh();
+			setPendingDelete(vol.name);
 		}
 	});
+
+	if (pendingDelete) {
+		return (
+			<Confirm
+				message={`Delete volume "${pendingDelete}"?`}
+				onConfirm={execDelete}
+				onCancel={() => setPendingDelete(null)}
+			/>
+		);
+	}
 
 	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 

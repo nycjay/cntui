@@ -1,6 +1,7 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
+import { Confirm } from "../components/confirm.js";
 import { deleteImage, listImages } from "../lib/images.js";
 import { col } from "../lib/table.js";
 import { theme } from "../lib/theme.js";
@@ -19,6 +20,7 @@ export function ImagesView() {
 	const [images, setImages] = useState<Image[]>([]);
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
+	const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
 	const refresh = async () => {
 		try {
@@ -34,20 +36,44 @@ export function ImagesView() {
 		refresh();
 	}, []);
 
-	useKeyboard(async (key) => {
+	const execDelete = async () => {
+		if (!pendingDelete) return;
+		try {
+			await deleteImage(pendingDelete);
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPendingDelete(null);
+		await refresh();
+	};
+
+	useKeyboard((key) => {
+		if (pendingDelete) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(images.length - 1, s + 1));
-		if (key.name === "r") await refresh();
+		if (key.name === "r") {
+			refresh();
+			return;
+		}
 
 		const img = images[selected];
 		if (!img) return;
 
 		if (key.name === "d") {
-			await deleteImage(img.configuration.name);
-			await refresh();
+			setPendingDelete(img.configuration.name);
 		}
 	});
+
+	if (pendingDelete) {
+		return (
+			<Confirm
+				message={`Delete image "${pendingDelete}"?`}
+				onConfirm={execDelete}
+				onCancel={() => setPendingDelete(null)}
+			/>
+		);
+	}
 
 	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 
