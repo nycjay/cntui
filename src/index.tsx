@@ -19,9 +19,9 @@ if (process.argv.includes("--version") || process.argv.includes("-v")) {
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
 	console.log(`
   ┌─────────────────────────────┐
-  │  ╭───╮                      │
-  │  │ ▶ │  cntui v${VERSION}         │
-  │  ╰───╯                      │
+  │  ┏━━━┓                      │
+  │  ┃ ◼ ┃  cntui v${VERSION}         │
+  │  ┗━━━┛                      │
   └─────────────────────────────┘
   A terminal UI for Apple's container runtime
 

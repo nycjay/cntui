@@ -4,9 +4,9 @@ A terminal UI for [Apple's container runtime](https://github.com/apple/container
 
 ```
   ┌─────────────────────────────┐
-  │  ╭───╮                      │
-  │  │ ▶ │  cntui              │
-  │  ╰───╯                      │
+  │  ┏━━━┓                      │
+  │  ┃ ◼ ┃  cntui              │
+  │  ┗━━━┛                      │
   └─────────────────────────────┘
 ```
 
