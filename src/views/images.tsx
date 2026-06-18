@@ -93,7 +93,7 @@ export function ImagesView() {
 				const line = `${prefix}${col(img.configuration.name, 45)} ${col(formatSize(img.configuration.descriptor.size), 10)} ${img.configuration.creationDate}`;
 				return (
 					<text
-						key={img.id}
+						key={`${img.id}-${i}`}
 						fg={i === selected ? theme.selected : theme.text}
 						attributes={i === selected ? bold : undefined}
 						content={line}

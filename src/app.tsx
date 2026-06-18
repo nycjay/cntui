@@ -49,7 +49,7 @@ export function App({ config }: { config: Config }) {
 			backgroundColor="#1a1b26"
 			shouldFill={true}
 		>
-			<box>
+			<box flexDirection="row">
 				{TABS.map((tab, i) => (
 					<text
 						key={tab}
