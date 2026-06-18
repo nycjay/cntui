@@ -42,36 +42,37 @@ export function ImagesView() {
 		if (!img) return;
 
 		if (key.name === "d") {
-			await deleteImage(img.reference);
+			await deleteImage(img.configuration.name);
 			await refresh();
 		}
 	});
 
 	if (error) return <text fg="red" content={`Error: ${error}`} />;
 
-	const header = `  ${"REFERENCE".padEnd(40)} ${"SIZE".padEnd(12)} CREATED`;
+	const header = `  ${"NAME".padEnd(45)} ${"SIZE".padEnd(12)} CREATED`;
 
 	return (
 		<box flexDirection="column">
 			<text
+				fg="default"
 				attributes={bold}
 				content={`Images (${images.length}) — [d] delete [r] refresh`}
 			/>
-			<text attributes={bold} content={header} />
+			<text fg="default" attributes={bold} content={header} />
 			{images.map((img, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
-				const line = `${prefix}${img.reference.padEnd(40)} ${formatSize(img.size).padEnd(12)} ${img.createdAt}`;
+				const line = `${prefix}${img.configuration.name.padEnd(45)} ${formatSize(img.configuration.descriptor.size).padEnd(12)} ${img.configuration.creationDate}`;
 				return (
 					<text
 						key={img.id}
-						fg={i === selected ? "green" : undefined}
+						fg={i === selected ? "green" : "default"}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{images.length === 0 && (
-				<text attributes={dim} content=" No images found" />
+				<text fg="default" attributes={dim} content=" No images found" />
 			)}
 		</box>
 	);

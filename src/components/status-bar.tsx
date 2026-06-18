@@ -6,6 +6,7 @@ export function StatusBar() {
 	return (
 		<box borderStyle="single" paddingX={1}>
 			<text
+				fg="default"
 				attributes={dim}
 				content="[1-5] Switch Tab | [Enter] Select | [d] Delete | [s] Start/Stop | [q] Quit"
 			/>

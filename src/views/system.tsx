@@ -44,21 +44,28 @@ export function SystemView() {
 	return (
 		<box flexDirection="column">
 			<text
+				fg="default"
 				attributes={bold}
 				content="System — [s] start/stop service [r] refresh"
 			/>
 			<text fg={serviceColor} content={`Service: ${serviceText}`} />
-			{status?.version && <text content={`Version: ${status.version}`} />}
-			{status?.commit && <text content={`Commit: ${status.commit}`} />}
+			{status?.version && (
+				<text fg="default" content={`Version: ${status.version}`} />
+			)}
+			{status?.commit && (
+				<text fg="default" content={`Commit: ${status.commit}`} />
+			)}
 			{diskUsage.length > 0 && (
 				<box flexDirection="column" marginTop={1}>
-					<text attributes={bold} content="Disk Usage" />
+					<text fg="default" attributes={bold} content="Disk Usage" />
 					<text
+						fg="default"
 						attributes={bold}
 						content={`  ${"TYPE".padEnd(16)} ${"TOTAL".padEnd(8)} ${"ACTIVE".padEnd(8)} ${"SIZE".padEnd(12)} RECLAIMABLE`}
 					/>
 					{diskUsage.map((d) => (
 						<text
+							fg="default"
 							key={d.type}
 							content={`  ${d.type.padEnd(16)} ${String(d.total).padEnd(8)} ${String(d.active).padEnd(8)} ${d.size.padEnd(12)} ${d.reclaimable}`}
 						/>

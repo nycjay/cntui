@@ -24,10 +24,12 @@ export interface PortMapping {
 }
 
 export interface Image {
-	reference: string;
 	id: string;
-	size: number;
-	createdAt: string;
+	configuration: {
+		name: string;
+		descriptor: { digest: string; size: number };
+		creationDate: string;
+	};
 }
 
 export interface Volume {

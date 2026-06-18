@@ -48,24 +48,25 @@ export function VolumesView() {
 	return (
 		<box flexDirection="column">
 			<text
+				fg="default"
 				attributes={bold}
 				content={`Volumes (${volumes.length}) — [d] delete [r] refresh`}
 			/>
-			<text attributes={bold} content={header} />
+			<text fg="default" attributes={bold} content={header} />
 			{volumes.map((vol, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
 				const line = `${prefix}${vol.name.padEnd(40)} ${vol.createdAt ?? ""}`;
 				return (
 					<text
 						key={vol.name}
-						fg={i === selected ? "green" : undefined}
+						fg={i === selected ? "green" : "default"}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{volumes.length === 0 && (
-				<text attributes={dim} content=" No volumes found" />
+				<text fg="default" attributes={dim} content=" No volumes found" />
 			)}
 		</box>
 	);

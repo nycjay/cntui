@@ -56,24 +56,25 @@ export function MachinesView() {
 	return (
 		<box flexDirection="column">
 			<text
+				fg="default"
 				attributes={bold}
 				content={`Machines (${machines.length}) — [s] stop [d] delete [r] refresh`}
 			/>
-			<text attributes={bold} content={header} />
+			<text fg="default" attributes={bold} content={header} />
 			{machines.map((m, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
 				const line = `${prefix}${m.id.padEnd(24)} ${m.status.padEnd(12)} ${m.image.padEnd(30)} ${m.default ? "★" : ""}`;
 				return (
 					<text
 						key={m.id}
-						fg={i === selected ? "green" : undefined}
+						fg={i === selected ? "green" : "default"}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{machines.length === 0 && (
-				<text attributes={dim} content=" No machines found" />
+				<text fg="default" attributes={dim} content=" No machines found" />
 			)}
 		</box>
 	);

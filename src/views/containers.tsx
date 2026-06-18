@@ -62,10 +62,11 @@ export function ContainersView({
 	return (
 		<box flexDirection="column">
 			<text
+				fg="default"
 				attributes={bold}
 				content={`Containers (${containers.length}) — [s] start/stop [d] delete [r] refresh`}
 			/>
-			<text attributes={bold} content={header} />
+			<text fg="default" attributes={bold} content={header} />
 			{containers.map((c, i) => {
 				const ports =
 					c.configuration.publishedPorts
@@ -77,14 +78,14 @@ export function ContainersView({
 				return (
 					<text
 						key={c.id}
-						fg={i === selected ? "green" : undefined}
+						fg={i === selected ? "green" : "default"}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{containers.length === 0 && (
-				<text attributes={dim} content=" No containers found" />
+				<text fg="default" attributes={dim} content=" No containers found" />
 			)}
 		</box>
 	);
