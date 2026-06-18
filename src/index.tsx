@@ -70,7 +70,10 @@ async function main() {
 		}
 	}
 
-	const renderer = await createCliRenderer();
+	const renderer = await createCliRenderer({
+		openConsoleOnError: false,
+		consoleMode: "disabled",
+	});
 	createRoot(renderer).render(<App config={config} />);
 }
 

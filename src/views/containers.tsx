@@ -47,12 +47,20 @@ export function ContainersView({
 		if (!c) return;
 
 		if (key.name === "s") {
-			if (c.status.state === "running") await stopContainer(c.id);
-			else await startContainer(c.id);
+			try {
+				if (c.status.state === "running") await stopContainer(c.id);
+				else await startContainer(c.id);
+			} catch (e) {
+				setError((e as Error).message);
+			}
 			await refresh();
 		}
 		if (key.name === "d") {
-			await deleteContainer(c.id, true);
+			try {
+				await deleteContainer(c.id, true);
+			} catch (e) {
+				setError((e as Error).message);
+			}
 			await refresh();
 		}
 	});
