@@ -28,7 +28,6 @@ export function ContainersView({
 	const refresh = async () => {
 		try {
 			setContainers(await listContainers());
-			setError(null);
 		} catch (e) {
 			setError((e as Error).message);
 		}
@@ -66,6 +65,7 @@ export function ContainersView({
 		if (key.name === "down")
 			setSelected((s) => Math.min(containers.length - 1, s + 1));
 		if (key.name === "r") {
+			setError(null);
 			refresh();
 			return;
 		}
