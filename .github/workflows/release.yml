@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+
+      - run: bun install
+
+      - name: Build binary
+        run: bun run build
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ctui
