@@ -41,6 +41,14 @@ rendering core) and React/TypeScript on Bun.
 
 Also available as npm scripts (`bun run dev`, `bun test`, etc.) if you prefer.
 
+## Adding Dependencies
+
+When adding a new dependency:
+1. `bun add <package>` (or `bun add -d` for dev)
+2. Immediately pin to exact version in package.json (remove `^`/`~`)
+3. Verify the package is legitimate (check npm page, GitHub stars, maintainers)
+4. Commit both package.json and bun.lock together
+
 ## File Naming
 
 - Views: `src/views/<name>.tsx` (one per tab)

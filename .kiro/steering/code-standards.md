@@ -36,6 +36,14 @@
 - Refresh functions are async, called on mount and after actions
 - Auto-refresh (setInterval) only for the containers view (most dynamic)
 
+## Dependencies
+
+- Pin all dependency versions exactly (no `^` or `~` ranges)
+- Update deps intentionally with `bun update <package>`, never auto-range
+- Commit lockfile (`bun.lock`) alongside package.json changes
+- Prefer well-known, actively maintained packages
+- If a package name looks unusual, verify it before adding
+
 ## Git
 
 - Conventional commits: feat:, fix:, docs:, chore:, test:
