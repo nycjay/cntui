@@ -12,7 +12,7 @@ import {
 const VERSION = "0.1.0";
 
 if (process.argv.includes("--version") || process.argv.includes("-v")) {
-	console.log(`contui ${VERSION}`);
+	console.log(`cntui ${VERSION}`);
 	process.exit(0);
 }
 
@@ -20,18 +20,18 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
 	console.log(`
   ┌─────────────────────────────┐
   │  ╭───╮                      │
-  │  │ ▶ │  ConTUI v${VERSION}         │
+  │  │ ▶ │  cntui v${VERSION}         │
   │  ╰───╯                      │
   └─────────────────────────────┘
   A terminal UI for Apple's container runtime
 
-  Usage: contui [options]
+  Usage: cntui [options]
 
   Options:
     -v, --version  Show version
     -h, --help     Show this help
 
-  Config: ~/.config/contui/config.toml
+  Config: ~/.config/cntui/config.toml
 `);
 	process.exit(0);
 }
@@ -64,7 +64,7 @@ async function main() {
 				"Container service is not running. Start it with: container system start",
 			);
 			console.error(
-				"Or set auto_start_service = true in ~/.config/contui/config.toml",
+				"Or set auto_start_service = true in ~/.config/cntui/config.toml",
 			);
 			process.exit(1);
 		}

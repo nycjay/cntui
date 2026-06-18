@@ -5,7 +5,7 @@
 The CLI binary is `container` (typically at /usr/local/bin/container).
 Installed from: https://github.com/apple/container
 
-## Key Commands Used by ConTUI
+## Key Commands Used by cntui
 
 ### System
 - `container system version --format json` — check if service is running + get version
@@ -41,10 +41,10 @@ Installed from: https://github.com/apple/container
 
 ## Version Requirements
 
-ConTUI requires container CLI v1.0.0 or later. The 1.0 release removed
+cntui requires container CLI v1.0.0 or later. The 1.0 release removed
 compatibility with v0 XPC APIs, so clients and servers must both be v1.
 
-On startup, ConTUI checks the CLI version and exits with a clear upgrade
+On startup, cntui checks the CLI version and exits with a clear upgrade
 message if the installed version is too old.
 
 ## JSON Output

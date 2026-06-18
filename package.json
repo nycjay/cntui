@@ -1,12 +1,12 @@
 {
-	"name": "contui",
+	"name": "cntui",
 	"version": "0.1.0",
 	"description": "A terminal UI for Apple's container runtime",
 	"type": "module",
 	"main": "src/index.tsx",
 	"scripts": {
 		"dev": "bun --watch run src/index.tsx",
-		"build": "bun build src/index.tsx --compile --outfile contui",
+		"build": "bun build src/index.tsx --compile --outfile cntui",
 		"test": "bun test",
 		"test:watch": "bun test --watch",
 		"test:coverage": "bun test --coverage",

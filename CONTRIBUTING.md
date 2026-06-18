@@ -1,4 +1,4 @@
-# Contributing to ConTUI
+# Contributing to cntui
 
 Thanks for your interest in contributing! This document covers the development
 workflow and standards.
@@ -6,8 +6,8 @@ workflow and standards.
 ## Getting Started
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/contui.git
-cd contui
+git clone https://github.com/YOUR_USERNAME/cntui.git
+cd cntui
 just doctor   # verify dependencies
 just setup    # install packages
 just check    # run full CI locally

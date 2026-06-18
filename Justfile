@@ -1,4 +1,4 @@
-# contui development tasks
+# cntui development tasks
 
 # Install dependencies
 setup:
@@ -41,11 +41,11 @@ test-file FILE:
 
 # Build standalone binary
 build:
-    bun build src/index.tsx --compile --outfile contui
+    bun build src/index.tsx --compile --outfile cntui
 
 # Clean build artifacts
 clean:
-    rm -f contui
+    rm -f cntui
     rm -rf node_modules/.cache
 
 # Verify container CLI is set up correctly

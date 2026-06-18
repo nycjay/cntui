@@ -15,7 +15,7 @@ const DEFAULT_CONFIG: Config = {
 	auto_start_service: false,
 };
 
-const CONFIG_PATH = join(homedir(), ".config", "contui", "config.toml");
+const CONFIG_PATH = join(homedir(), ".config", "cntui", "config.toml");
 
 function parseTOML(content: string): Record<string, string> {
 	const result: Record<string, string> = {};
