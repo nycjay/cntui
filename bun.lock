@@ -5,14 +5,14 @@
     "": {
       "name": "ctui",
       "dependencies": {
-        "@opentui/core": "^0.1.0",
-        "@opentui/react": "^0.1.0",
+        "@opentui/core": "0.1.107",
+        "@opentui/react": "0.1.107",
       },
       "devDependencies": {
         "@biomejs/biome": "1.9.4",
-        "@types/bun": "^1.2.0",
-        "@types/react": "^19.2.17",
-        "typescript": "^5.7.0",
+        "@types/bun": "1.3.14",
+        "@types/react": "19.2.17",
+        "typescript": "5.9.3",
       },
     },
   },
