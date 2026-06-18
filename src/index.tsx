@@ -9,6 +9,13 @@ import {
 	startSystem,
 } from "./lib/system.js";
 
+const VERSION = "0.1.0";
+
+if (process.argv.includes("--version") || process.argv.includes("-v")) {
+	console.log(`ctui ${VERSION}`);
+	process.exit(0);
+}
+
 async function main() {
 	const config = loadConfig();
 
