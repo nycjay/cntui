@@ -1,19 +1,26 @@
 /**
- * Execute a shell command and return parsed JSON output.
- * Throws on non-zero exit code.
+ * Execute a container CLI command and return stdout.
+ * Throws on non-zero exit code or if the binary is not found.
  */
 export async function exec(args: string[]): Promise<string> {
-	const proc = Bun.spawn(["container", ...args], {
-		stdout: "pipe",
-		stderr: "pipe",
-	});
-	const stdout = await new Response(proc.stdout).text();
-	const stderr = await new Response(proc.stderr).text();
-	const exitCode = await proc.exited;
-	if (exitCode !== 0) {
-		throw new Error(`container ${args.join(" ")} failed: ${stderr.trim()}`);
+	try {
+		const proc = Bun.spawn(["container", ...args], {
+			stdout: "pipe",
+			stderr: "pipe",
+		});
+		const stdout = await new Response(proc.stdout).text();
+		const stderr = await new Response(proc.stderr).text();
+		const exitCode = await proc.exited;
+		if (exitCode !== 0) {
+			throw new Error(`container ${args.join(" ")} failed: ${stderr.trim()}`);
+		}
+		return stdout.trim();
+	} catch (e) {
+		if (e instanceof Error && e.message.includes("failed:")) throw e;
+		throw new Error(
+			`container ${args.join(" ")} failed: ${(e as Error).message}`,
+		);
 	}
-	return stdout.trim();
 }
 
 export async function execJson<T>(args: string[]): Promise<T> {

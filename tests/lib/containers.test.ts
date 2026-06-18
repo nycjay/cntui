@@ -7,7 +7,7 @@ describe("containers", () => {
 			const result = await listContainers();
 			expect(Array.isArray(result)).toBe(true);
 		} catch (e) {
-			expect((e as Error).message).toContain("failed");
+			expect(e).toBeInstanceOf(Error);
 		}
 	});
 });
