@@ -1,6 +1,7 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
+import { Confirm } from "../components/confirm.js";
 import {
 	deleteMachine,
 	listMachines,
@@ -17,6 +18,10 @@ export function MachinesView() {
 	const [machines, setMachines] = useState<Machine[]>([]);
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
+	const [pending, setPending] = useState<{
+		type: "stop" | "delete";
+		id: string;
+	} | null>(null);
 
 	const refresh = async () => {
 		try {
@@ -31,24 +36,44 @@ export function MachinesView() {
 		refresh();
 	}, []);
 
-	useKeyboard(async (key) => {
+	const execAction = async () => {
+		if (!pending) return;
+		try {
+			if (pending.type === "stop") await stopMachine(pending.id);
+			if (pending.type === "delete") await deleteMachine(pending.id);
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPending(null);
+		await refresh();
+	};
+
+	useKeyboard((key) => {
+		if (pending) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(machines.length - 1, s + 1));
-		if (key.name === "r") await refresh();
+		if (key.name === "r") {
+			refresh();
+			return;
+		}
 
 		const m = machines[selected];
 		if (!m) return;
 
-		if (key.name === "s") {
-			await stopMachine(m.id);
-			await refresh();
-		}
-		if (key.name === "d") {
-			await deleteMachine(m.id);
-			await refresh();
-		}
+		if (key.name === "s") setPending({ type: "stop", id: m.id });
+		if (key.name === "d") setPending({ type: "delete", id: m.id });
 	});
+
+	if (pending) {
+		return (
+			<Confirm
+				message={`${pending.type} machine "${pending.id}"?`}
+				onConfirm={execAction}
+				onCancel={() => setPending(null)}
+			/>
+		);
+	}
 
 	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 

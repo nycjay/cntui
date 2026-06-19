@@ -62,13 +62,16 @@ export function VolumesView() {
 		}
 
 		const vol = volumes[selected];
+
+		if (key.name === "p") {
+			setPendingPrune(true);
+			return;
+		}
+
 		if (!vol) return;
 
 		if (key.name === "d") {
 			setPendingDelete(vol.name);
-		}
-		if (key.name === "p") {
-			setPendingPrune(true);
 		}
 	});
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Splash } from "./components/splash.js";
 import { StatusBar } from "./components/status-bar.js";
 import type { Config } from "./lib/config.js";
+import { VERSION } from "./version.js";
 import { ContainersView } from "./views/containers.js";
 import { ImagesView } from "./views/images.js";
 import { MachinesView } from "./views/machines.js";
@@ -14,8 +15,6 @@ type Tab = "containers" | "images" | "volumes" | "machines" | "system";
 
 const TABS: Tab[] = ["containers", "images", "volumes", "machines", "system"];
 const bold = createTextAttributes({ bold: true });
-
-const VERSION = "0.1.0";
 
 export function App({ config }: { config: Config }) {
 	const [showSplash, setShowSplash] = useState(true);

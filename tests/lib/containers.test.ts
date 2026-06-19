@@ -3,11 +3,13 @@ import { listContainers } from "../../src/lib/containers.js";
 
 describe("containers", () => {
 	test("listContainers returns array or throws if CLI unavailable", async () => {
+		let result: unknown;
 		try {
-			const result = await listContainers();
-			expect(Array.isArray(result)).toBe(true);
+			result = await listContainers();
 		} catch (e) {
 			expect(e).toBeInstanceOf(Error);
+			return;
 		}
+		expect(Array.isArray(result)).toBe(true);
 	});
 });

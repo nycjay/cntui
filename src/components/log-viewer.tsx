@@ -1,5 +1,5 @@
 import { createTextAttributes } from "@opentui/core";
-import { useKeyboard } from "@opentui/react";
+import { useKeyboard, useTerminalDimensions } from "@opentui/react";
 import { useEffect, useRef, useState } from "react";
 import { getContainerLogs } from "../lib/containers.js";
 import { theme } from "../lib/theme.js";
@@ -18,6 +18,8 @@ export function LogViewer({
 	const [offset, setOffset] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const polling = useRef<ReturnType<typeof setInterval> | null>(null);
+	const { height } = useTerminalDimensions();
+	const viewportHeight = Math.max(5, height - 5);
 
 	const fetchLogs = async () => {
 		try {
@@ -41,12 +43,14 @@ export function LogViewer({
 		if (key.name === "escape" || key.name === "q") onBack();
 		if (key.name === "up") setOffset((o) => Math.max(0, o - 1));
 		if (key.name === "down")
-			setOffset((o) => Math.min(Math.max(0, lines.length - 20), o + 1));
+			setOffset((o) =>
+				Math.min(Math.max(0, lines.length - viewportHeight), o + 1),
+			);
 		if (key.name === "g") setOffset(0);
-		if (key.name === "G") setOffset(Math.max(0, lines.length - 20));
+		if (key.name === "G") setOffset(Math.max(0, lines.length - viewportHeight));
 	});
 
-	const visible = lines.slice(offset, offset + 20);
+	const visible = lines.slice(offset, offset + viewportHeight);
 
 	return (
 		<box flexDirection="column">

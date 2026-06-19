@@ -24,6 +24,7 @@ export function ActionMenu({
 
 	useKeyboard((key) => {
 		if (key.name === "escape" || key.name === "q") onClose();
+		if (actions.length === 0) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(actions.length - 1, s + 1));

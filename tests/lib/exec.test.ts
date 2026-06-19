@@ -14,11 +14,13 @@ describe("exec", () => {
 
 describe("execJson", () => {
 	test("parses valid JSON from container list or throws", async () => {
+		let result: unknown;
 		try {
-			const result = await execJson<unknown[]>(["list", "--all"]);
-			expect(Array.isArray(result)).toBe(true);
+			result = await execJson<unknown[]>(["list", "--all"]);
 		} catch (e) {
 			expect(e).toBeInstanceOf(Error);
+			return;
 		}
+		expect(Array.isArray(result)).toBe(true);
 	});
 });

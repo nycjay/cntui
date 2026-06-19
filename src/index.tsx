@@ -6,7 +6,7 @@ import {
 	startSystem,
 } from "./lib/system.js";
 
-const VERSION = "0.1.0";
+import { VERSION } from "./version.js";
 
 if (process.argv.includes("--version") || process.argv.includes("-v")) {
 	process.stdout.write(`cntui ${VERSION}\n`);
