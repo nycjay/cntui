@@ -71,7 +71,26 @@ tests/
 **New action on existing view:**
 1. Add function to appropriate `src/lib/<name>.ts`
 2. Wire keybinding in the view's `useKeyboard` handler
-3. Document the key in the view header text and `src/components/status-bar.tsx`
+3. Document the key in `src/components/help-overlay.tsx` and `src/components/status-bar.tsx`
+
+### Keyboard Input
+
+- Use `key.name === "g" && key.shift` for uppercase letters (not `key.name === "G"`)
+- Use `key.name === "g" && !key.shift` for the lowercase variant when both are handled
+- Use `key.ctrl && key.name === "c"` for ctrl combos
+
+### Error Handling in Views
+
+- All `useKeyboard` async handlers must wrap awaited calls in try/catch
+- Errors set an `error` state variable that renders inline (red text)
+- Users dismiss errors with the Escape key
+- Multi-step actions should try/catch around the group
+
+### Terminal / Colors
+
+- Never use raw escape codes inline — use helpers in `src/lib/renderer.ts`
+- Prefer ANSI color names ("red", "cyan") over hex codes
+- All custom colors live in `src/lib/theme.ts` as named constants
 
 ### Testing
 

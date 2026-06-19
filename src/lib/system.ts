@@ -62,8 +62,8 @@ export async function stopSystem(): Promise<void> {
 	await exec(["system", "stop"]);
 }
 
-export async function getDiskUsage(): Promise<DiskUsage[]> {
-	return execJson<DiskUsage[]>(["system", "df"]);
+export async function getDiskUsage(): Promise<DiskUsage> {
+	return execJson<DiskUsage>(["system", "df"]);
 }
 
 export async function isContainerInstalled(): Promise<boolean> {

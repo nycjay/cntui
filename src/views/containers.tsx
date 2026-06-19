@@ -8,13 +8,11 @@ import { LogViewer } from "../components/log-viewer.js";
 import { StatsView } from "../components/stats-view.js";
 import {
 	deleteContainer,
-	execInContainer,
 	listContainers,
 	pruneContainers,
 	startContainer,
 	stopContainer,
 } from "../lib/containers.js";
-import { getRenderer } from "../lib/renderer.js";
 import { col } from "../lib/table.js";
 import { theme } from "../lib/theme.js";
 import type { Container } from "../types/container.js";
@@ -112,11 +110,6 @@ export function ContainersView({
 		if (key.name === "t") {
 			setSubView({ type: "stats", id: c.id });
 		}
-		if (key.name === "e" && c.status.state === "running") {
-			const renderer = getRenderer();
-			renderer.suspend();
-			execInContainer(c.id).then(() => renderer.resume());
-		}
 		if (key.name === "return") {
 			setSubView({ type: "menu", id: c.id, state: c.status.state });
 		}
@@ -127,16 +120,6 @@ export function ContainersView({
 		const actions = [
 			...(isRunning
 				? [
-						{
-							key: "e",
-							label: "Exec Shell",
-							onSelect: () => {
-								setSubView(null);
-								const renderer = getRenderer();
-								renderer.suspend();
-								execInContainer(subView.id).then(() => renderer.resume());
-							},
-						},
 						{
 							key: "l",
 							label: "Logs",
@@ -246,25 +229,31 @@ export function ContainersView({
 				const prefix = i === selected ? "▸ " : "  ";
 				const image = c.configuration.image.reference ?? "";
 				const stateColor =
-					c.status.state === "running" ? theme.success : theme.muted;
+					c.status.state === "running"
+						? theme.success
+						: c.status.state === "stopped"
+							? theme.muted
+							: theme.error;
 				const line = `${prefix}${col(c.id, 24)} `;
 				const statePart = col(c.status.state, 10);
 				const rest = ` ${col(image, 30)} ${ports}`;
+				const rowDim =
+					i !== selected && c.status.state !== "running" ? dim : undefined;
 				return (
 					<box key={c.id} flexDirection="row">
 						<text
 							fg={i === selected ? theme.selected : theme.text}
-							attributes={i === selected ? bold : undefined}
+							attributes={i === selected ? bold : rowDim}
 							content={line}
 						/>
 						<text
 							fg={i === selected ? theme.selected : stateColor}
-							attributes={i === selected ? bold : undefined}
+							attributes={i === selected ? bold : rowDim}
 							content={statePart}
 						/>
 						<text
 							fg={i === selected ? theme.selected : theme.text}
-							attributes={i === selected ? bold : undefined}
+							attributes={i === selected ? bold : rowDim}
 							content={rest}
 						/>
 					</box>
