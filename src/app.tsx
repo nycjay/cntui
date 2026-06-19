@@ -68,7 +68,7 @@ export function App({ config }: { config: Config }) {
 				{activeTab === "machines" && <MachinesView />}
 				{activeTab === "system" && <SystemView />}
 			</box>
-			<StatusBar />
+			<StatusBar activeTab={activeTab} />
 		</box>
 	);
 }
