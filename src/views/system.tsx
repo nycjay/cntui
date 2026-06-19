@@ -30,22 +30,24 @@ export function SystemView() {
 	const [error, setError] = useState<string | null>(null);
 
 	const refresh = async () => {
-		setStatus(await getSystemStatus());
-		try {
-			setDiskUsage(await getDiskUsage());
-		} catch {
-			setDiskUsage(null);
-		}
+		const [statusResult, diskResult] = await Promise.allSettled([
+			getSystemStatus(),
+			getDiskUsage(),
+		]);
+		if (statusResult.status === "fulfilled") setStatus(statusResult.value);
+		setDiskUsage(diskResult.status === "fulfilled" ? diskResult.value : null);
 	};
 
 	const pruneAll = async () => {
-		try {
-			await pruneContainers();
-			await pruneImages();
-			await pruneVolumes();
-		} catch (e) {
-			setError((e as Error).message);
-		}
+		const results = await Promise.allSettled([
+			pruneContainers(),
+			pruneImages(),
+			pruneVolumes(),
+		]);
+		const errors = results
+			.filter((r) => r.status === "rejected")
+			.map((r) => (r as PromiseRejectedResult).reason.message);
+		if (errors.length > 0) setError(errors.join("; "));
 		setConfirmPrune(false);
 		await refresh();
 	};

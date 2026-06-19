@@ -17,6 +17,7 @@ export function LogViewer({
 	const [offset, setOffset] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const tailing = useRef(true);
+	const [isTailing, setIsTailing] = useState(true);
 	const polling = useRef<ReturnType<typeof setInterval> | null>(null);
 	const { height } = useTerminalDimensions();
 	const viewportHeight = Math.max(20, height - 5);
@@ -41,12 +42,22 @@ export function LogViewer({
 		return () => {
 			if (polling.current) clearInterval(polling.current);
 		};
-	}, []);
+	}, [viewportHeight]);
+
+	const setTail = (value: boolean) => {
+		tailing.current = value;
+		setIsTailing(value);
+	};
+
+	const scrollToEnd = () => {
+		setTail(true);
+		setOffset(Math.max(0, lines.length - viewportHeight));
+	};
 
 	useKeyboard((key) => {
 		if (key.name === "escape" || key.name === "q") onBack();
 		if (key.name === "up") {
-			tailing.current = false;
+			setTail(false);
 			setOffset((o) => Math.max(0, o - 1));
 		}
 		if (key.name === "down") {
@@ -55,21 +66,16 @@ export function LogViewer({
 					Math.max(0, lines.length - viewportHeight),
 					o + 1,
 				);
-				if (next >= lines.length - viewportHeight) tailing.current = true;
+				if (next >= lines.length - viewportHeight) setTail(true);
 				return next;
 			});
 		}
 		if (key.name === "g" && !key.shift) {
-			tailing.current = false;
+			setTail(false);
 			setOffset(0);
 		}
-		if (key.name === "g" && key.shift) {
-			tailing.current = true;
-			setOffset(Math.max(0, lines.length - viewportHeight));
-		}
-		if (key.name === "f") {
-			tailing.current = true;
-			setOffset(Math.max(0, lines.length - viewportHeight));
+		if ((key.name === "g" && key.shift) || key.name === "f") {
+			scrollToEnd();
 		}
 	});
 
@@ -78,7 +84,7 @@ export function LogViewer({
 	while (visible.length < viewportHeight) {
 		visible.push("");
 	}
-	const modeLabel = tailing.current ? "TAIL" : "PAUSED";
+	const modeLabel = isTailing ? "TAIL" : "PAUSED";
 
 	return (
 		<box flexDirection="column">
