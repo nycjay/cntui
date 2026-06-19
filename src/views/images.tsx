@@ -1,6 +1,7 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
+import { ActionMenu } from "../components/action-menu.js";
 import { Confirm } from "../components/confirm.js";
 import { deleteImage, listImages, pruneImages } from "../lib/images.js";
 import { col } from "../lib/table.js";
@@ -21,7 +22,9 @@ export function ImagesView() {
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<string | null>(null);
-	const [pendingPrune, setPendingPrune] = useState(false);
+	const [pendingPrune, setPendingPrune] = useState<
+		false | true | "dangling" | "all"
+	>(false);
 
 	const refresh = async () => {
 		try {
@@ -47,9 +50,9 @@ export function ImagesView() {
 		await refresh();
 	};
 
-	const execPrune = async () => {
+	const execPrune = async (all: boolean) => {
 		try {
-			await pruneImages();
+			await pruneImages(all);
 		} catch (e) {
 			setError((e as Error).message);
 		}
@@ -78,11 +81,42 @@ export function ImagesView() {
 		}
 	});
 
-	if (pendingPrune) {
+	if (pendingPrune === true) {
+		return (
+			<ActionMenu
+				title="Prune Images"
+				actions={[
+					{
+						key: "d",
+						label: "Dangling only (untagged)",
+						onSelect: () => setPendingPrune("dangling"),
+					},
+					{
+						key: "a",
+						label: "All unused images",
+						onSelect: () => setPendingPrune("all"),
+					},
+				]}
+				onClose={() => setPendingPrune(false)}
+			/>
+		);
+	}
+
+	if (pendingPrune === "dangling") {
 		return (
 			<Confirm
-				message="Prune all dangling images?"
-				onConfirm={execPrune}
+				message="Prune all dangling (untagged) images?"
+				onConfirm={() => execPrune(false)}
+				onCancel={() => setPendingPrune(false)}
+			/>
+		);
+	}
+
+	if (pendingPrune === "all") {
+		return (
+			<Confirm
+				message="Prune ALL unused images?"
+				onConfirm={() => execPrune(true)}
 				onCancel={() => setPendingPrune(false)}
 			/>
 		);
