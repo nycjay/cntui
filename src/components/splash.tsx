@@ -5,10 +5,11 @@ const bold = createTextAttributes({ bold: true });
 const dim = createTextAttributes({ dim: true });
 
 const LOGO = `
-   ___  _ __  ___ _   _ _ 
-  / __|| '_ \\| __| | | |_|
- | (__ | | | | |_| |_| | |
-  \\___||_| |_|\\__|\\__,_|_|
+            _         _
+  ___ _ __ | |_ _   _(_)
+ / __| '_ \\| __| | | | |
+| (__| | | | |_| |_| | |
+ \\___|_| |_|\\__|\\__,_|_|
 `;
 
 export function Splash({ version }: { version: string }) {
