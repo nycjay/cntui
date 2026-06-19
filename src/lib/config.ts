@@ -42,13 +42,22 @@ export function loadConfig(): Config {
 	try {
 		const content = readFileSync(CONFIG_PATH, "utf-8");
 		const raw = parseTOML(content);
+		const VALID_TABS: Config["default_tab"][] = [
+			"containers",
+			"images",
+			"volumes",
+			"machines",
+			"system",
+		];
+		const parsedInterval = Number(raw.refresh_interval);
+		const parsedTab = raw.default_tab as Config["default_tab"];
 		return {
-			refresh_interval: raw.refresh_interval
-				? Number(raw.refresh_interval)
+			refresh_interval: Number.isFinite(parsedInterval)
+				? parsedInterval
 				: DEFAULT_CONFIG.refresh_interval,
-			default_tab:
-				(raw.default_tab as Config["default_tab"]) ??
-				DEFAULT_CONFIG.default_tab,
+			default_tab: VALID_TABS.includes(parsedTab)
+				? parsedTab
+				: DEFAULT_CONFIG.default_tab,
 			auto_start_service: raw.auto_start_service === "true",
 		};
 	} catch {

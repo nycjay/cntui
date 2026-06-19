@@ -46,6 +46,7 @@ export function ContainersView({
 	const refresh = async () => {
 		try {
 			setContainers(await listContainers());
+			setError(null);
 		} catch (e) {
 			setError((e as Error).message);
 		}
@@ -74,7 +75,7 @@ export function ContainersView({
 	};
 
 	useKeyboard((key) => {
-		if (pending) return;
+		if (pending || subView) return;
 		if (key.name === "escape" && error) {
 			setError(null);
 			return;

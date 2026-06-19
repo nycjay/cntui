@@ -71,13 +71,16 @@ export function ImagesView() {
 		}
 
 		const img = images[selected];
+
+		if (key.name === "p") {
+			setPendingPrune(true);
+			return;
+		}
+
 		if (!img) return;
 
 		if (key.name === "d") {
 			setPendingDelete(img.configuration.name);
-		}
-		if (key.name === "p") {
-			setPendingPrune(true);
 		}
 	});
 
