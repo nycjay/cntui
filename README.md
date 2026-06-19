@@ -3,11 +3,11 @@
 A terminal UI for [Apple's container runtime](https://github.com/apple/container). Manage containers, images, volumes, and machines with keyboard-driven navigation.
 
 ```
-  ┌─────────────────────────────┐
-  │  ┏━━━┓                      │
-  │  ┃ ◼ ┃  cntui               │
-  │  ┗━━━┛                      │
-  └─────────────────────────────┘
+            _         _
+  ___ _ __ | |_ _   _(_)
+ / __| '_ \| __| | | | |
+| (__| | | | |_| |_| | |
+ \___|_| |_|\__|\__,_|_|
 ```
 
 <!-- TODO: Add demo GIF here -->
