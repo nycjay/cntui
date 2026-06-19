@@ -32,16 +32,16 @@ A terminal UI for [Apple's container runtime](https://github.com/apple/container
 ## Install
 
 ```bash
+brew install nycjay/tap/cntui
+```
+
+Or from source:
+
+```bash
 git clone https://github.com/nycjay/cntui.git
 cd cntui
 bun install
-```
-
-Or if you use [mise](https://mise.jdx.dev) for version management:
-
-```bash
-mise install   # installs correct bun + zig versions
-bun install
+just build
 ```
 
 ## Usage
