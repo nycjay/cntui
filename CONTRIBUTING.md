@@ -6,7 +6,7 @@ workflow and standards.
 ## Getting Started
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/cntui.git
+git clone https://github.com/nycjay/cntui.git
 cd cntui
 just doctor   # verify dependencies
 just setup    # install packages

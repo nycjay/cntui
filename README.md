@@ -32,7 +32,7 @@ A terminal UI for [Apple's container runtime](https://github.com/apple/container
 ## Install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/cntui.git
+git clone https://github.com/nycjay/cntui.git
 cd cntui
 bun install
 ```
