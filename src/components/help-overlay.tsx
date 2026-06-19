@@ -14,7 +14,6 @@ const HELP: Record<string, string[]> = {
 		"l         View logs",
 		"i         Inspect (JSON)",
 		"t         Stats",
-		"e         Exec shell (running only)",
 		"p         Prune stopped containers",
 		"r         Refresh",
 	],

@@ -5,6 +5,7 @@ import { HelpOverlay } from "./components/help-overlay.js";
 import { Splash } from "./components/splash.js";
 import { StatusBar } from "./components/status-bar.js";
 import type { Config } from "./lib/config.js";
+import { getRenderer } from "./lib/renderer.js";
 import { VERSION } from "./version.js";
 import { ContainersView } from "./views/containers.js";
 import { ImagesView } from "./views/images.js";
@@ -42,7 +43,11 @@ export function App({ config }: { config: Config }) {
 		if (key.name === "3") setActiveTab("volumes");
 		if (key.name === "4") setActiveTab("machines");
 		if (key.name === "5") setActiveTab("system");
-		if (key.name === "q" || (key.ctrl && key.name === "c")) process.exit(0);
+		if (key.name === "q" || (key.ctrl && key.name === "c")) {
+			getRenderer().destroy();
+			process.stdout.write("\x1b[?1049l\x1b[0m\x1b[2J\x1b[H");
+			process.exit(0);
+		}
 	});
 
 	if (showSplash) return <Splash version={VERSION} />;

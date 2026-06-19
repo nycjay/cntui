@@ -8,13 +8,11 @@ import { LogViewer } from "../components/log-viewer.js";
 import { StatsView } from "../components/stats-view.js";
 import {
 	deleteContainer,
-	execInContainer,
 	listContainers,
 	pruneContainers,
 	startContainer,
 	stopContainer,
 } from "../lib/containers.js";
-import { getRenderer } from "../lib/renderer.js";
 import { col } from "../lib/table.js";
 import { theme } from "../lib/theme.js";
 import type { Container } from "../types/container.js";
@@ -112,11 +110,6 @@ export function ContainersView({
 		if (key.name === "t") {
 			setSubView({ type: "stats", id: c.id });
 		}
-		if (key.name === "e" && c.status.state === "running") {
-			const renderer = getRenderer();
-			renderer.suspend();
-			execInContainer(c.id).then(() => renderer.resume());
-		}
 		if (key.name === "return") {
 			setSubView({ type: "menu", id: c.id, state: c.status.state });
 		}
@@ -127,16 +120,6 @@ export function ContainersView({
 		const actions = [
 			...(isRunning
 				? [
-						{
-							key: "e",
-							label: "Exec Shell",
-							onSelect: () => {
-								setSubView(null);
-								const renderer = getRenderer();
-								renderer.suspend();
-								execInContainer(subView.id).then(() => renderer.resume());
-							},
-						},
 						{
 							key: "l",
 							label: "Logs",

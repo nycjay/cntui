@@ -46,8 +46,9 @@ export function InspectView({
 			setOffset((o) =>
 				Math.min(Math.max(0, lines.length - viewportHeight), o + 1),
 			);
-		if (key.name === "g") setOffset(0);
-		if (key.name === "G") setOffset(Math.max(0, lines.length - viewportHeight));
+		if (key.name === "g" && !key.shift) setOffset(0);
+		if (key.name === "g" && key.shift)
+			setOffset(Math.max(0, lines.length - viewportHeight));
 	});
 
 	const visible = lines.slice(offset, offset + viewportHeight);
