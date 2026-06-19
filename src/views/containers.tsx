@@ -5,13 +5,16 @@ import { ActionMenu } from "../components/action-menu.js";
 import { Confirm } from "../components/confirm.js";
 import { InspectView } from "../components/inspect-view.js";
 import { LogViewer } from "../components/log-viewer.js";
+import { StatsView } from "../components/stats-view.js";
 import {
 	deleteContainer,
+	execInContainer,
 	listContainers,
 	pruneContainers,
 	startContainer,
 	stopContainer,
 } from "../lib/containers.js";
+import { getRenderer } from "../lib/renderer.js";
 import { col } from "../lib/table.js";
 import { theme } from "../lib/theme.js";
 import type { Container } from "../types/container.js";
@@ -20,7 +23,7 @@ const bold = createTextAttributes({ bold: true });
 const dim = createTextAttributes({ dim: true });
 
 type SubView =
-	| { type: "logs" | "inspect"; id: string }
+	| { type: "logs" | "inspect" | "stats"; id: string }
 	| { type: "menu"; id: string; state: string }
 	| null;
 
@@ -105,6 +108,14 @@ export function ContainersView({
 		if (key.name === "i") {
 			setSubView({ type: "inspect", id: c.id });
 		}
+		if (key.name === "t") {
+			setSubView({ type: "stats", id: c.id });
+		}
+		if (key.name === "e" && c.status.state === "running") {
+			const renderer = getRenderer();
+			renderer.suspend();
+			execInContainer(c.id).then(() => renderer.resume());
+		}
 		if (key.name === "return") {
 			setSubView({ type: "menu", id: c.id, state: c.status.state });
 		}
@@ -116,9 +127,24 @@ export function ContainersView({
 			...(isRunning
 				? [
 						{
+							key: "e",
+							label: "Exec Shell",
+							onSelect: () => {
+								setSubView(null);
+								const renderer = getRenderer();
+								renderer.suspend();
+								execInContainer(subView.id).then(() => renderer.resume());
+							},
+						},
+						{
 							key: "l",
 							label: "Logs",
 							onSelect: () => setSubView({ type: "logs", id: subView.id }),
+						},
+						{
+							key: "t",
+							label: "Stats",
+							onSelect: () => setSubView({ type: "stats", id: subView.id }),
 						},
 						{
 							key: "s",
@@ -171,6 +197,12 @@ export function ContainersView({
 	if (subView?.type === "inspect") {
 		return (
 			<InspectView containerId={subView.id} onBack={() => setSubView(null)} />
+		);
+	}
+
+	if (subView?.type === "stats") {
+		return (
+			<StatsView containerId={subView.id} onBack={() => setSubView(null)} />
 		);
 	}
 

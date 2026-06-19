@@ -69,10 +69,12 @@ async function main() {
 	// Set terminal background before OpenTUI renders
 	process.stdout.write("\x1b[48;2;26;27;38m\x1b[2J\x1b[H");
 
+	const { setRenderer } = await import("./lib/renderer.js");
 	const renderer = await createCliRenderer({
 		openConsoleOnError: false,
 		consoleMode: "disabled",
 	});
+	setRenderer(renderer);
 	createRoot(renderer).render(<App config={config} />);
 }
 

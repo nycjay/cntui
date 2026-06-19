@@ -41,3 +41,21 @@ export async function getContainerLogs(
 export async function pruneContainers(): Promise<string> {
 	return exec(["prune"]);
 }
+
+export async function execInContainer(
+	id: string,
+	command = "/bin/sh",
+): Promise<void> {
+	const proc = Bun.spawn(["container", "exec", "-it", id, command], {
+		stdin: "inherit",
+		stdout: "inherit",
+		stderr: "inherit",
+	});
+	await proc.exited;
+}
+
+export async function getContainerStats(id?: string): Promise<string> {
+	const args = ["stats", "--no-stream", "--format", "json"];
+	if (id) args.push(id);
+	return exec(args);
+}
