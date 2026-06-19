@@ -8,6 +8,7 @@ import { LogViewer } from "../components/log-viewer.js";
 import {
 	deleteContainer,
 	listContainers,
+	pruneContainers,
 	startContainer,
 	stopContainer,
 } from "../lib/containers.js";
@@ -23,7 +24,10 @@ type SubView =
 	| { type: "menu"; id: string; state: string }
 	| null;
 
-type PendingAction = { type: "start" | "stop" | "delete"; id: string } | null;
+type PendingAction = {
+	type: "start" | "stop" | "delete" | "prune";
+	id: string;
+} | null;
 
 export function ContainersView({
 	refreshInterval = 3,
@@ -56,6 +60,7 @@ export function ContainersView({
 			if (pending.type === "start") await startContainer(pending.id);
 			if (pending.type === "stop") await stopContainer(pending.id);
 			if (pending.type === "delete") await deleteContainer(pending.id, true);
+			if (pending.type === "prune") await pruneContainers();
 		} catch (e) {
 			setPending(null);
 			setError((e as Error).message);
@@ -77,6 +82,10 @@ export function ContainersView({
 		if (key.name === "r") {
 			setError(null);
 			refresh();
+			return;
+		}
+		if (key.name === "p") {
+			setPending({ type: "prune", id: "" });
 			return;
 		}
 
@@ -166,9 +175,13 @@ export function ContainersView({
 	}
 
 	if (pending) {
+		const msg =
+			pending.type === "prune"
+				? "Prune all stopped containers?"
+				: `${pending.type} container "${pending.id}"?`;
 		return (
 			<Confirm
-				message={`${pending.type} container "${pending.id}"?`}
+				message={msg}
 				onConfirm={execAction}
 				onCancel={() => setPending(null)}
 			/>

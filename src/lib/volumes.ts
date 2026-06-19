@@ -19,3 +19,7 @@ export async function inspectVolume(name: string): Promise<unknown> {
 	const output = await exec(["volume", "inspect", name]);
 	return JSON.parse(output);
 }
+
+export async function pruneVolumes(): Promise<string> {
+	return exec(["volume", "prune"]);
+}

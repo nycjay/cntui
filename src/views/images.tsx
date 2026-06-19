@@ -2,7 +2,7 @@ import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
 import { Confirm } from "../components/confirm.js";
-import { deleteImage, listImages } from "../lib/images.js";
+import { deleteImage, listImages, pruneImages } from "../lib/images.js";
 import { col } from "../lib/table.js";
 import { theme } from "../lib/theme.js";
 import type { Image } from "../types/container.js";
@@ -21,6 +21,7 @@ export function ImagesView() {
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+	const [pendingPrune, setPendingPrune] = useState(false);
 
 	const refresh = async () => {
 		try {
@@ -46,8 +47,18 @@ export function ImagesView() {
 		await refresh();
 	};
 
+	const execPrune = async () => {
+		try {
+			await pruneImages();
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPendingPrune(false);
+		await refresh();
+	};
+
 	useKeyboard((key) => {
-		if (pendingDelete) return;
+		if (pendingDelete || pendingPrune) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(images.length - 1, s + 1));
@@ -62,7 +73,20 @@ export function ImagesView() {
 		if (key.name === "d") {
 			setPendingDelete(img.configuration.name);
 		}
+		if (key.name === "p") {
+			setPendingPrune(true);
+		}
 	});
+
+	if (pendingPrune) {
+		return (
+			<Confirm
+				message="Prune all dangling images?"
+				onConfirm={execPrune}
+				onCancel={() => setPendingPrune(false)}
+			/>
+		);
+	}
 
 	if (pendingDelete) {
 		return (

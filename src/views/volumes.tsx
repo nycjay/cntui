@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Confirm } from "../components/confirm.js";
 import { col } from "../lib/table.js";
 import { theme } from "../lib/theme.js";
-import { deleteVolume, listVolumes } from "../lib/volumes.js";
+import { deleteVolume, listVolumes, pruneVolumes } from "../lib/volumes.js";
 import type { Volume } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -15,6 +15,7 @@ export function VolumesView() {
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+	const [pendingPrune, setPendingPrune] = useState(false);
 
 	const refresh = async () => {
 		try {
@@ -40,8 +41,18 @@ export function VolumesView() {
 		await refresh();
 	};
 
+	const execPrune = async () => {
+		try {
+			await pruneVolumes();
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPendingPrune(false);
+		await refresh();
+	};
+
 	useKeyboard((key) => {
-		if (pendingDelete) return;
+		if (pendingDelete || pendingPrune) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(volumes.length - 1, s + 1));
@@ -56,7 +67,20 @@ export function VolumesView() {
 		if (key.name === "d") {
 			setPendingDelete(vol.name);
 		}
+		if (key.name === "p") {
+			setPendingPrune(true);
+		}
 	});
+
+	if (pendingPrune) {
+		return (
+			<Confirm
+				message="Prune all unused volumes?"
+				onConfirm={execPrune}
+				onCancel={() => setPendingPrune(false)}
+			/>
+		);
+	}
 
 	if (pendingDelete) {
 		return (
