@@ -1,7 +1,10 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
-import { deleteVolume, listVolumes } from "../lib/volumes.js";
+import { Confirm } from "../components/confirm.js";
+import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
+import { deleteVolume, listVolumes, pruneVolumes } from "../lib/volumes.js";
 import type { Volume } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -11,6 +14,8 @@ export function VolumesView() {
 	const [volumes, setVolumes] = useState<Volume[]>([]);
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
+	const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+	const [pendingPrune, setPendingPrune] = useState(false);
 
 	const refresh = async () => {
 		try {
@@ -21,51 +26,98 @@ export function VolumesView() {
 		}
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
 	useEffect(() => {
 		refresh();
 	}, []);
 
-	useKeyboard(async (key) => {
+	const execDelete = async () => {
+		if (!pendingDelete) return;
+		try {
+			await deleteVolume(pendingDelete);
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPendingDelete(null);
+		await refresh();
+	};
+
+	const execPrune = async () => {
+		try {
+			await pruneVolumes();
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPendingPrune(false);
+		await refresh();
+	};
+
+	useKeyboard((key) => {
+		if (pendingDelete || pendingPrune) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(volumes.length - 1, s + 1));
-		if (key.name === "r") await refresh();
+		if (key.name === "r") {
+			refresh();
+			return;
+		}
 
 		const vol = volumes[selected];
 		if (!vol) return;
 
 		if (key.name === "d") {
-			await deleteVolume(vol.name);
-			await refresh();
+			setPendingDelete(vol.name);
+		}
+		if (key.name === "p") {
+			setPendingPrune(true);
 		}
 	});
 
-	if (error) return <text fg="red" content={`Error: ${error}`} />;
+	if (pendingPrune) {
+		return (
+			<Confirm
+				message="Prune all unused volumes?"
+				onConfirm={execPrune}
+				onCancel={() => setPendingPrune(false)}
+			/>
+		);
+	}
 
-	const header = `  ${"NAME".padEnd(40)} CREATED`;
+	if (pendingDelete) {
+		return (
+			<Confirm
+				message={`Delete volume "${pendingDelete}"?`}
+				onConfirm={execDelete}
+				onCancel={() => setPendingDelete(null)}
+			/>
+		);
+	}
+
+	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
+
+	const header = `  ${col("NAME", 45)} CREATED`;
 
 	return (
 		<box flexDirection="column">
 			<text
+				fg={theme.text}
 				attributes={bold}
-				content={`Volumes (${volumes.length}) — [d] delete [r] refresh`}
+				content={`Volumes (${volumes.length})`}
 			/>
-			<text attributes={bold} content={header} />
+			<text fg={theme.muted} content={header} />
 			{volumes.map((vol, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
-				const line = `${prefix}${vol.name.padEnd(40)} ${vol.createdAt ?? ""}`;
+				const line = `${prefix}${col(vol.name, 45)} ${vol.createdAt ?? ""}`;
 				return (
 					<text
 						key={vol.name}
-						fg={i === selected ? "green" : undefined}
+						fg={i === selected ? theme.selected : theme.text}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{volumes.length === 0 && (
-				<text attributes={dim} content=" No volumes found" />
+				<text fg={theme.muted} attributes={dim} content="  No volumes found" />
 			)}
 		</box>
 	);

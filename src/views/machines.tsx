@@ -2,11 +2,13 @@ import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
 import {
-	type Machine,
 	deleteMachine,
 	listMachines,
+	type Machine,
 	stopMachine,
 } from "../lib/machines.js";
+import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
 
 const bold = createTextAttributes({ bold: true });
 const dim = createTextAttributes({ dim: true });
@@ -25,7 +27,6 @@ export function MachinesView() {
 		}
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
 	useEffect(() => {
 		refresh();
 	}, []);
@@ -49,31 +50,32 @@ export function MachinesView() {
 		}
 	});
 
-	if (error) return <text fg="red" content={`Error: ${error}`} />;
+	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
 
-	const header = `  ${"NAME".padEnd(24)} ${"STATUS".padEnd(12)} ${"IMAGE".padEnd(30)} DEFAULT`;
+	const header = `  ${col("NAME", 24)} ${col("STATUS", 10)} ${col("IMAGE", 30)} DEFAULT`;
 
 	return (
 		<box flexDirection="column">
 			<text
+				fg={theme.text}
 				attributes={bold}
-				content={`Machines (${machines.length}) — [s] stop [d] delete [r] refresh`}
+				content={`Machines (${machines.length})`}
 			/>
-			<text attributes={bold} content={header} />
+			<text fg={theme.muted} content={header} />
 			{machines.map((m, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
-				const line = `${prefix}${m.id.padEnd(24)} ${m.status.padEnd(12)} ${m.image.padEnd(30)} ${m.default ? "★" : ""}`;
+				const line = `${prefix}${col(m.id, 24)} ${col(m.status, 10)} ${col(m.image, 30)} ${m.default ? "★" : ""}`;
 				return (
 					<text
 						key={m.id}
-						fg={i === selected ? "green" : undefined}
+						fg={i === selected ? theme.selected : theme.text}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{machines.length === 0 && (
-				<text attributes={dim} content=" No machines found" />
+				<text fg={theme.muted} attributes={dim} content="  No machines found" />
 			)}
 		</box>
 	);

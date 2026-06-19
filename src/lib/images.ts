@@ -17,3 +17,9 @@ export async function inspectImage(reference: string): Promise<unknown> {
 	const output = await exec(["image", "inspect", reference]);
 	return JSON.parse(output);
 }
+
+export async function pruneImages(all = false): Promise<string> {
+	const args = ["image", "prune"];
+	if (all) args.push("--all");
+	return exec(args);
+}

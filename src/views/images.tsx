@@ -1,7 +1,10 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
-import { deleteImage, listImages } from "../lib/images.js";
+import { Confirm } from "../components/confirm.js";
+import { deleteImage, listImages, pruneImages } from "../lib/images.js";
+import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
 import type { Image } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -17,6 +20,8 @@ export function ImagesView() {
 	const [images, setImages] = useState<Image[]>([]);
 	const [selected, setSelected] = useState(0);
 	const [error, setError] = useState<string | null>(null);
+	const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+	const [pendingPrune, setPendingPrune] = useState(false);
 
 	const refresh = async () => {
 		try {
@@ -27,51 +32,122 @@ export function ImagesView() {
 		}
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
 	useEffect(() => {
 		refresh();
 	}, []);
 
-	useKeyboard(async (key) => {
+	const execDelete = async () => {
+		if (!pendingDelete) return;
+		try {
+			await deleteImage(pendingDelete);
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPendingDelete(null);
+		await refresh();
+	};
+
+	const execPrune = async () => {
+		try {
+			await pruneImages();
+		} catch (e) {
+			setError((e as Error).message);
+		}
+		setPendingPrune(false);
+		await refresh();
+	};
+
+	useKeyboard((key) => {
+		if (pendingDelete || pendingPrune) return;
 		if (key.name === "up") setSelected((s) => Math.max(0, s - 1));
 		if (key.name === "down")
 			setSelected((s) => Math.min(images.length - 1, s + 1));
-		if (key.name === "r") await refresh();
+		if (key.name === "r") {
+			refresh();
+			return;
+		}
 
 		const img = images[selected];
 		if (!img) return;
 
 		if (key.name === "d") {
-			await deleteImage(img.reference);
-			await refresh();
+			setPendingDelete(img.configuration.name);
+		}
+		if (key.name === "p") {
+			setPendingPrune(true);
 		}
 	});
 
-	if (error) return <text fg="red" content={`Error: ${error}`} />;
+	if (pendingPrune) {
+		return (
+			<Confirm
+				message="Prune all dangling images?"
+				onConfirm={execPrune}
+				onCancel={() => setPendingPrune(false)}
+			/>
+		);
+	}
 
-	const header = `  ${"REFERENCE".padEnd(40)} ${"SIZE".padEnd(12)} CREATED`;
+	if (pendingDelete) {
+		return (
+			<Confirm
+				message={`Delete image "${pendingDelete}"?`}
+				onConfirm={execDelete}
+				onCancel={() => setPendingDelete(null)}
+			/>
+		);
+	}
+
+	if (error) return <text fg={theme.error} content={`Error: ${error}`} />;
+
+	const header = `  ${col("NAME", 45)} ${col("SIZE", 10)} CREATED`;
+	const current = images[selected];
 
 	return (
 		<box flexDirection="column">
 			<text
+				fg={theme.text}
 				attributes={bold}
-				content={`Images (${images.length}) — [d] delete [r] refresh`}
+				content={`Images (${images.length})`}
 			/>
-			<text attributes={bold} content={header} />
+			<text fg={theme.muted} content={header} />
 			{images.map((img, i) => {
 				const prefix = i === selected ? "▸ " : "  ";
-				const line = `${prefix}${img.reference.padEnd(40)} ${formatSize(img.size).padEnd(12)} ${img.createdAt}`;
+				const line = `${prefix}${col(img.configuration.name, 45)} ${col(formatSize(img.configuration.descriptor.size), 10)} ${img.configuration.creationDate}`;
 				return (
 					<text
-						key={img.id}
-						fg={i === selected ? "green" : undefined}
+						key={`${img.id}-${i}`}
+						fg={i === selected ? theme.selected : theme.text}
 						attributes={i === selected ? bold : undefined}
 						content={line}
 					/>
 				);
 			})}
 			{images.length === 0 && (
-				<text attributes={dim} content=" No images found" />
+				<text fg={theme.muted} attributes={dim} content="  No images found" />
+			)}
+			{current && (
+				<box
+					marginTop={1}
+					borderStyle="single"
+					borderColor={theme.border}
+					paddingX={1}
+					flexDirection="column"
+				>
+					<text
+						fg={theme.text}
+						attributes={bold}
+						content={current.configuration.name}
+					/>
+					<text
+						fg={theme.muted}
+						content={`Digest: ${current.configuration.descriptor.digest}`}
+					/>
+					<text
+						fg={theme.muted}
+						content={`Size: ${formatSize(current.configuration.descriptor.size)} | Created: ${current.configuration.creationDate}`}
+					/>
+				</box>
 			)}
 		</box>
 	);

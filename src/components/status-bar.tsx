@@ -1,13 +1,27 @@
 import { createTextAttributes } from "@opentui/core";
+import { theme } from "../lib/theme.js";
 
 const dim = createTextAttributes({ dim: true });
 
-export function StatusBar() {
+const HINTS: Record<string, string> = {
+	containers:
+		"[1-5] Tab | ↑↓ Navigate | [Enter] Actions | [s] Start/Stop | [d] Delete | [p] Prune | [r] Refresh | [q] Quit",
+	images:
+		"[1-5] Tab | ↑↓ Navigate | [d] Delete | [p] Prune | [r] Refresh | [q] Quit",
+	volumes:
+		"[1-5] Tab | ↑↓ Navigate | [d] Delete | [p] Prune | [r] Refresh | [q] Quit",
+	machines:
+		"[1-5] Tab | ↑↓ Navigate | [s] Stop | [d] Delete | [r] Refresh | [q] Quit",
+	system: "[1-5] Tab | [s] Start/Stop Service | [r] Refresh | [q] Quit",
+};
+
+export function StatusBar({ activeTab }: { activeTab: string }) {
 	return (
-		<box borderStyle="single" paddingX={1}>
+		<box borderStyle="single" borderColor={theme.border} paddingX={1}>
 			<text
+				fg={theme.muted}
 				attributes={dim}
-				content="[1-5] Switch Tab | [Enter] Select | [d] Delete | [s] Start/Stop | [q] Quit"
+				content={HINTS[activeTab] ?? HINTS.containers}
 			/>
 		</box>
 	);

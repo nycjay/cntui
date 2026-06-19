@@ -1,4 +1,4 @@
-# ctui development tasks
+# cntui development tasks
 
 # Install dependencies
 setup:
@@ -41,11 +41,11 @@ test-file FILE:
 
 # Build standalone binary
 build:
-    bun build src/index.tsx --compile --outfile ctui
+    bun build src/index.tsx --compile --minify --outfile cntui
 
 # Clean build artifacts
 clean:
-    rm -f ctui
+    rm -f cntui
     rm -rf node_modules/.cache
 
 # Verify container CLI is set up correctly
@@ -68,3 +68,14 @@ doctor:
 release VERSION:
     git tag -a "v{{VERSION}}" -m "Release v{{VERSION}}"
     git push origin "v{{VERSION}}"
+
+# Bump version in package.json and src/index.tsx, commit and tag (usage: just bump 0.2.0)
+bump VERSION:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sed -i '' 's/"version": "[^"]*"/"version": "{{VERSION}}"/' package.json
+    sed -i '' 's/const VERSION = "[^"]*"/const VERSION = "{{VERSION}}"/' src/index.tsx
+    git add package.json src/index.tsx
+    git commit -m "chore: bump version to {{VERSION}}"
+    git tag -a "v{{VERSION}}" -m "Release v{{VERSION}}"
+    echo "Tagged v{{VERSION}}. Run 'git push && git push --tags' to release."

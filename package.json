@@ -1,12 +1,12 @@
 {
-	"name": "ctui",
+	"name": "cntui",
 	"version": "0.1.0",
 	"description": "A terminal UI for Apple's container runtime",
 	"type": "module",
 	"main": "src/index.tsx",
 	"scripts": {
 		"dev": "bun --watch run src/index.tsx",
-		"build": "bun build src/index.tsx --compile --outfile ctui",
+		"build": "bun build src/index.tsx --compile --minify --outfile cntui",
 		"test": "bun test",
 		"test:watch": "bun test --watch",
 		"test:coverage": "bun test --coverage",
@@ -15,15 +15,17 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@opentui/core": "^0.1.0",
-		"@opentui/react": "^0.1.0"
+		"@opentui/core": "0.4.1",
+		"@opentui/react": "0.4.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@types/bun": "^1.2.0",
-		"@types/react": "^19.2.17",
-		"typescript": "^5.7.0"
+		"@biomejs/biome": "2.5.0",
+		"@types/bun": "1.3.14",
+		"@types/react": "19.2.17",
+		"typescript": "6.0.3"
 	},
 	"license": "MIT",
-	"trustedDependencies": ["@biomejs/biome"]
+	"trustedDependencies": [
+		"@biomejs/biome"
+	]
 }
