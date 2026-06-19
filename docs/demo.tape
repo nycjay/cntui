@@ -6,7 +6,7 @@ Set Width 1200
 Set Height 800
 Set Theme "TokyoNight"
 
-Type "/Users/jason.knaster/code/container-tui/ctui/cntui"
+Type "cntui"
 Enter
 Sleep 3s
 
