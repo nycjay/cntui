@@ -1,6 +1,7 @@
 import { createTextAttributes } from "@opentui/core";
 import { useKeyboard } from "@opentui/react";
 import { useEffect, useState } from "react";
+import { HelpOverlay } from "./components/help-overlay.js";
 import { Splash } from "./components/splash.js";
 import { StatusBar } from "./components/status-bar.js";
 import type { Config } from "./lib/config.js";
@@ -19,6 +20,7 @@ const bold = createTextAttributes({ bold: true });
 export function App({ config }: { config: Config }) {
 	const [showSplash, setShowSplash] = useState(true);
 	const [activeTab, setActiveTab] = useState<Tab>(config.default_tab);
+	const [showHelp, setShowHelp] = useState(false);
 
 	useEffect(() => {
 		const timer = setTimeout(() => setShowSplash(false), 1500);
@@ -30,6 +32,11 @@ export function App({ config }: { config: Config }) {
 			setShowSplash(false);
 			return;
 		}
+		if (showHelp) return;
+		if (key.name === "?") {
+			setShowHelp(true);
+			return;
+		}
 		if (key.name === "1") setActiveTab("containers");
 		if (key.name === "2") setActiveTab("images");
 		if (key.name === "3") setActiveTab("volumes");
@@ -39,6 +46,10 @@ export function App({ config }: { config: Config }) {
 	});
 
 	if (showSplash) return <Splash version={VERSION} />;
+	if (showHelp)
+		return (
+			<HelpOverlay activeTab={activeTab} onClose={() => setShowHelp(false)} />
+		);
 
 	return (
 		<box

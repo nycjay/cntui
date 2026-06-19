@@ -246,25 +246,31 @@ export function ContainersView({
 				const prefix = i === selected ? "▸ " : "  ";
 				const image = c.configuration.image.reference ?? "";
 				const stateColor =
-					c.status.state === "running" ? theme.success : theme.muted;
+					c.status.state === "running"
+						? theme.success
+						: c.status.state === "stopped"
+							? theme.muted
+							: theme.error;
 				const line = `${prefix}${col(c.id, 24)} `;
 				const statePart = col(c.status.state, 10);
 				const rest = ` ${col(image, 30)} ${ports}`;
+				const rowDim =
+					i !== selected && c.status.state !== "running" ? dim : undefined;
 				return (
 					<box key={c.id} flexDirection="row">
 						<text
 							fg={i === selected ? theme.selected : theme.text}
-							attributes={i === selected ? bold : undefined}
+							attributes={i === selected ? bold : rowDim}
 							content={line}
 						/>
 						<text
 							fg={i === selected ? theme.selected : stateColor}
-							attributes={i === selected ? bold : undefined}
+							attributes={i === selected ? bold : rowDim}
 							content={statePart}
 						/>
 						<text
 							fg={i === selected ? theme.selected : theme.text}
-							attributes={i === selected ? bold : undefined}
+							attributes={i === selected ? bold : rowDim}
 							content={rest}
 						/>
 					</box>

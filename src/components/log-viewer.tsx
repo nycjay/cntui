@@ -16,6 +16,7 @@ export function LogViewer({
 }) {
 	const [lines, setLines] = useState<string[]>([]);
 	const [offset, setOffset] = useState(0);
+	const [tailing, setTailing] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const polling = useRef<ReturnType<typeof setInterval> | null>(null);
 	const { height } = useTerminalDimensions();
@@ -24,7 +25,8 @@ export function LogViewer({
 	const fetchLogs = async () => {
 		try {
 			const output = await getContainerLogs(containerId, 200);
-			setLines(output.split("\n"));
+			const newLines = output.split("\n");
+			setLines(newLines);
 			setError(null);
 		} catch (e) {
 			setError((e as Error).message);
@@ -39,25 +41,51 @@ export function LogViewer({
 		};
 	}, []);
 
+	// Auto-scroll to bottom when tailing
+	useEffect(() => {
+		if (tailing) {
+			setOffset(Math.max(0, lines.length - viewportHeight));
+		}
+	}, [lines.length, tailing, viewportHeight]);
+
 	useKeyboard((key) => {
 		if (key.name === "escape" || key.name === "q") onBack();
-		if (key.name === "up") setOffset((o) => Math.max(0, o - 1));
-		if (key.name === "down")
-			setOffset((o) =>
-				Math.min(Math.max(0, lines.length - viewportHeight), o + 1),
-			);
-		if (key.name === "g") setOffset(0);
-		if (key.name === "G") setOffset(Math.max(0, lines.length - viewportHeight));
+		if (key.name === "up") {
+			setTailing(false);
+			setOffset((o) => Math.max(0, o - 1));
+		}
+		if (key.name === "down") {
+			setOffset((o) => {
+				const next = Math.min(
+					Math.max(0, lines.length - viewportHeight),
+					o + 1,
+				);
+				if (next >= lines.length - viewportHeight) setTailing(true);
+				return next;
+			});
+		}
+		if (key.name === "g") {
+			setTailing(false);
+			setOffset(0);
+		}
+		if (key.name === "G") {
+			setTailing(true);
+			setOffset(Math.max(0, lines.length - viewportHeight));
+		}
+		if (key.name === "f") {
+			setTailing(true);
+		}
 	});
 
 	const visible = lines.slice(offset, offset + viewportHeight);
+	const modeLabel = tailing ? "TAIL" : "PAUSED";
 
 	return (
 		<box flexDirection="column">
 			<text
 				fg={theme.text}
 				attributes={bold}
-				content={`Logs: ${containerId} (${lines.length} lines) — [↑↓] scroll [g/G] top/bottom [Esc] back`}
+				content={`Logs: ${containerId} (${lines.length} lines) [${modeLabel}] — [↑↓] scroll [g/G] top/bottom [f] follow [Esc] back`}
 			/>
 			{error && <text fg={theme.error} content={`Error: ${error}`} />}
 			<box
