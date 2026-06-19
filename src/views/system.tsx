@@ -7,6 +7,8 @@ import {
 	startSystem,
 	stopSystem,
 } from "../lib/system.js";
+import { col } from "../lib/table.js";
+import { theme } from "../lib/theme.js";
 import type { DiskUsage, SystemStatus } from "../types/container.js";
 
 const bold = createTextAttributes({ bold: true });
@@ -24,7 +26,6 @@ export function SystemView() {
 		}
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
 	useEffect(() => {
 		refresh();
 	}, []);
@@ -38,29 +39,31 @@ export function SystemView() {
 		if (key.name === "r") await refresh();
 	});
 
-	const serviceColor = status?.running ? "green" : "red";
-	const serviceText = status?.running ? "Running" : "Stopped";
-
 	return (
 		<box flexDirection="column">
+			<text fg={theme.text} attributes={bold} content="System" />
 			<text
-				attributes={bold}
-				content="System — [s] start/stop service [r] refresh"
+				fg={status?.running ? theme.success : theme.error}
+				content={`Service: ${status?.running ? "Running" : "Stopped"}`}
 			/>
-			<text fg={serviceColor} content={`Service: ${serviceText}`} />
-			{status?.version && <text content={`Version: ${status.version}`} />}
-			{status?.commit && <text content={`Commit: ${status.commit}`} />}
+			{status?.version && (
+				<text fg={theme.text} content={`Version: ${status.version}`} />
+			)}
+			{status?.commit && (
+				<text fg={theme.muted} content={`Commit:  ${status.commit}`} />
+			)}
 			{diskUsage.length > 0 && (
 				<box flexDirection="column" marginTop={1}>
-					<text attributes={bold} content="Disk Usage" />
+					<text fg={theme.text} attributes={bold} content="Disk Usage" />
 					<text
-						attributes={bold}
-						content={`  ${"TYPE".padEnd(16)} ${"TOTAL".padEnd(8)} ${"ACTIVE".padEnd(8)} ${"SIZE".padEnd(12)} RECLAIMABLE`}
+						fg={theme.muted}
+						content={`  ${col("TYPE", 14)} ${col("TOTAL", 8)} ${col("ACTIVE", 8)} ${col("SIZE", 12)} RECLAIMABLE`}
 					/>
 					{diskUsage.map((d) => (
 						<text
 							key={d.type}
-							content={`  ${d.type.padEnd(16)} ${String(d.total).padEnd(8)} ${String(d.active).padEnd(8)} ${d.size.padEnd(12)} ${d.reclaimable}`}
+							fg={theme.text}
+							content={`  ${col(d.type, 14)} ${col(String(d.total), 8)} ${col(String(d.active), 8)} ${col(d.size, 12)} ${d.reclaimable}`}
 						/>
 					))}
 				</box>

@@ -10,7 +10,7 @@ jobs:
   check:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -30,3 +30,6 @@ jobs:
 
       - name: Test
         run: bun test --coverage
+
+      - name: Build
+        run: bun run build

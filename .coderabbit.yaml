@@ -1,0 +1,15 @@
+language: en-US
+reviews:
+  profile: chill
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "src/lib/**"
+      instructions: "This is the CLI wrapper layer. No UI code should be here. Focus on error handling and correct use of the container CLI."
+    - path: "src/views/**"
+      instructions: "React components using OpenTUI. Use useKeyboard for input, theme.ts for colors, and the Confirm component for destructive actions."
+    - path: "tests/**"
+      instructions: "Tests must pass whether or not the Apple container CLI is installed."
+chat:
+  auto_reply: true

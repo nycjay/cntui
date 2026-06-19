@@ -1,8 +1,8 @@
 {
-	"organizeImports": { "enabled": true },
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
-		"rules": { "recommended": true }
+		"rules": { "preset": "recommended" }
 	},
 	"formatter": {
 		"enabled": true,

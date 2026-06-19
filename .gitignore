@@ -1,5 +1,7 @@
 node_modules/
 dist/
-ctui
+cntui
 *.log
 .DS_Store
+*.bun-build
+*.upx
