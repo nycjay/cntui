@@ -46,6 +46,7 @@ build:
 # Clean build artifacts
 clean:
     rm -f cntui
+    rm -f .*.bun-build
     rm -rf node_modules/.cache
 
 # Verify container CLI is set up correctly
@@ -74,8 +75,8 @@ bump VERSION:
     #!/usr/bin/env bash
     set -euo pipefail
     sed -i '' 's/"version": "[^"]*"/"version": "{{VERSION}}"/' package.json
-    sed -i '' 's/const VERSION = "[^"]*"/const VERSION = "{{VERSION}}"/' src/index.tsx
-    git add package.json src/index.tsx
+    sed -i '' 's/const VERSION = "[^"]*"/const VERSION = "{{VERSION}}"/' src/version.ts
+    git add package.json src/version.ts
     git commit -m "chore: bump version to {{VERSION}}"
     git tag -a "v{{VERSION}}" -m "Release v{{VERSION}}"
     echo "Tagged v{{VERSION}}. Run 'git push && git push --tags' to release."
