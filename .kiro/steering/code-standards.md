@@ -36,6 +36,28 @@
 - Refresh functions are async, called on mount and after actions
 - Auto-refresh (setInterval) only for the containers view (most dynamic)
 
+## Terminal Escape Codes
+
+- Never use raw escape codes inline — wrap in named helpers (see `src/lib/renderer.ts`)
+- Prefer ANSI color names ("red", "cyan") over hex codes where possible
+- Hex codes only for colors not available as named ANSI (e.g., background: "#1a1b26")
+- All custom colors live in `src/lib/theme.ts` as named constants
+
+## Keyboard Input
+
+- Use `key.name === "g" && key.shift` for uppercase letters (not `key.name === "G"`)
+- Use `key.name === "g" && !key.shift` for the lowercase variant when both are handled
+- Use `key.ctrl && key.name === "c"` for ctrl combos
+- All keybindings must be documented in help-overlay.tsx and status-bar.tsx
+
+## Error Handling in Views
+
+- All `useKeyboard` async handlers must wrap awaited calls in try/catch
+- Errors set an `error` state that renders inline (red text with dismiss hint)
+- Users dismiss errors with Escape key
+- Multi-step actions (e.g., pruneAll) should try/catch around the group so
+  partial failures still allow cleanup/refresh
+
 ## Dependencies
 
 - Pin all dependency versions exactly (no `^` or `~` ranges)

@@ -1,6 +1,6 @@
 /**
- * Theme colors using named ANSI colors supported by OpenTUI.
- * Valid values: black, red, green, yellow, blue, magenta, cyan, white
+ * Theme colors. Uses ANSI color names where possible (black, red, green,
+ * yellow, blue, magenta, cyan, white) and hex codes for custom colors.
  */
 export const theme = {
 	background: "#1a1b26",

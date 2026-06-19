@@ -27,6 +27,7 @@ export function SystemView() {
 	const [status, setStatus] = useState<SystemStatus | null>(null);
 	const [diskUsage, setDiskUsage] = useState<DiskUsage | null>(null);
 	const [confirmPrune, setConfirmPrune] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
 	const refresh = async () => {
 		setStatus(await getSystemStatus());
@@ -38,9 +39,13 @@ export function SystemView() {
 	};
 
 	const pruneAll = async () => {
-		await pruneContainers();
-		await pruneImages();
-		await pruneVolumes();
+		try {
+			await pruneContainers();
+			await pruneImages();
+			await pruneVolumes();
+		} catch (e) {
+			setError((e as Error).message);
+		}
 		setConfirmPrune(false);
 		await refresh();
 	};
@@ -51,9 +56,17 @@ export function SystemView() {
 
 	useKeyboard(async (key) => {
 		if (confirmPrune) return;
+		if (key.name === "escape" && error) {
+			setError(null);
+			return;
+		}
 		if (key.name === "s") {
-			if (status?.running) await stopSystem();
-			else await startSystem();
+			try {
+				if (status?.running) await stopSystem();
+				else await startSystem();
+			} catch (e) {
+				setError((e as Error).message);
+			}
 			await refresh();
 		}
 		if (key.name === "p" && diskUsage) {
@@ -86,6 +99,12 @@ export function SystemView() {
 				content="Apple Container Runtime"
 			/>
 			<text content="" />
+			{error && (
+				<text
+					fg={theme.error}
+					content={`Error: ${error} (press Esc to dismiss)`}
+				/>
+			)}
 			<text
 				fg={status?.running ? theme.success : theme.error}
 				content={`  Service:     ${status?.running ? "Running" : "Stopped"}`}
