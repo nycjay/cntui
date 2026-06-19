@@ -37,3 +37,7 @@ export async function getContainerLogs(
 	if (lines) args.push("-n", String(lines));
 	return exec(args);
 }
+
+export async function pruneContainers(): Promise<string> {
+	return exec(["prune"]);
+}
