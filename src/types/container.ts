@@ -47,9 +47,14 @@ export interface SystemStatus {
 }
 
 export interface DiskUsage {
-	type: string;
-	total: number;
+	containers: DiskUsageEntry;
+	images: DiskUsageEntry;
+	volumes: DiskUsageEntry;
+}
+
+export interface DiskUsageEntry {
 	active: number;
-	size: string;
-	reclaimable: string;
+	total: number;
+	sizeInBytes: number;
+	reclaimable: number;
 }

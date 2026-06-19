@@ -35,7 +35,11 @@ const HELP: Record<string, string[]> = {
 		"d         Delete machine",
 		"r         Refresh",
 	],
-	system: ["s         Start / Stop service", "r         Refresh"],
+	system: [
+		"s         Start / Stop service",
+		"p         Prune all (containers, images, volumes)",
+		"r         Refresh",
+	],
 };
 
 const GLOBAL = [
