@@ -9,11 +9,25 @@ const bold = createTextAttributes({ bold: true });
 
 interface StatEntry {
 	id: string;
-	cpuPercentage?: string;
-	memoryUsage?: string;
-	netIO?: string;
-	blockIO?: string;
-	pids?: number;
+	cpuUsageUsec: number;
+	memoryUsageBytes: number;
+	memoryLimitBytes: number;
+	networkRxBytes: number;
+	networkTxBytes: number;
+	blockReadBytes: number;
+	blockWriteBytes: number;
+	numProcesses: number;
+}
+
+function formatBytes(bytes: number): string {
+	if (bytes === 0) return "0 B";
+	const units = ["B", "KB", "MB", "GB"];
+	const i = Math.floor(Math.log(bytes) / Math.log(1024));
+	return `${(bytes / 1024 ** i).toFixed(1)} ${units[i]}`;
+}
+
+function formatCpu(usec: number): string {
+	return `${(usec / 1_000_000).toFixed(2)}s`;
 }
 
 export function StatsView({
@@ -63,13 +77,13 @@ export function StatsView({
 			>
 				<text
 					fg={theme.muted}
-					content={`${col("ID", 20)} ${col("CPU %", 8)} ${col("MEM", 12)} ${col("NET I/O", 14)} ${col("BLOCK I/O", 14)} PIDS`}
+					content={`${col("ID", 20)} ${col("CPU", 10)} ${col("MEM", 16)} ${col("NET I/O", 18)} ${col("BLOCK I/O", 18)} PIDS`}
 				/>
 				{stats.map((s) => (
 					<text
 						key={s.id}
 						fg={theme.text}
-						content={`${col(s.id, 20)} ${col(s.cpuPercentage ?? "-", 8)} ${col(s.memoryUsage ?? "-", 12)} ${col(s.netIO ?? "-", 14)} ${col(s.blockIO ?? "-", 14)} ${s.pids ?? "-"}`}
+						content={`${col(s.id, 20)} ${col(formatCpu(s.cpuUsageUsec), 10)} ${col(`${formatBytes(s.memoryUsageBytes)} / ${formatBytes(s.memoryLimitBytes)}`, 16)} ${col(`${formatBytes(s.networkRxBytes)} / ${formatBytes(s.networkTxBytes)}`, 18)} ${col(`${formatBytes(s.blockReadBytes)} / ${formatBytes(s.blockWriteBytes)}`, 18)} ${s.numProcesses}`}
 					/>
 				))}
 				{stats.length === 0 && !error && (
