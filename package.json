@@ -16,7 +16,7 @@
 	},
 	"dependencies": {
 		"@opentui/core": "0.4.1",
-		"@opentui/react": "0.4.1"
+		"@opentui/react": "0.4.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.2",
