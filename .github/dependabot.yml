@@ -7,6 +7,10 @@ updates:
     commit-message:
       prefix: "chore(deps)"
     open-pull-requests-limit: 5
+    groups:
+      opentui:
+        patterns:
+          - "@opentui/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
