@@ -15,8 +15,8 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@opentui/core": "0.5.7",
-		"@opentui/react": "0.5.7"
+		"@opentui/core": "0.5.9",
+		"@opentui/react": "0.5.9"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.10",
